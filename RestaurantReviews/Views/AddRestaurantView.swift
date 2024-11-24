@@ -8,7 +8,7 @@ struct AddRestaurantView: View {
     @Environment(\.dismiss) private var dismiss
     
     @StateObject private var locationManager = LocationManager()
-    private let yelpService = YelpService()
+    private let osmService = OpenStreetMapService()
     
     @State private var searchText = ""
     @State private var searchResults: [RestaurantSearchResult] = []
@@ -95,13 +95,13 @@ struct AddRestaurantView: View {
         errorMessage = nil
         
         do {
-            searchResults = try await yelpService.searchRestaurants(
+            searchResults = try await osmService.searchRestaurants(
                 query: searchText,
                 location: locationManager.location
             )
-        } catch YelpService.YelpError.invalidResponse {
+        } catch OpenStreetMapService.OSMError.invalidResponse {
             errorMessage = "Unable to connect to restaurant service. Please try again."
-        } catch YelpService.YelpError.decodingError {
+        } catch OpenStreetMapService.OSMError.decodingError {
             errorMessage = "There was a problem processing the restaurant data."
         } catch {
             errorMessage = "An unexpected error occurred. Please try again."
