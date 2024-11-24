@@ -6,6 +6,7 @@ import CoreLocation
 struct AddRestaurantView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Query private var existingRestaurants: [Restaurant]
     
     @StateObject private var locationManager = LocationManager()
     private let osmService = OpenStreetMapService()
@@ -74,17 +75,54 @@ struct AddRestaurantView: View {
     
     private var resultsList: some View {
         List(searchResults) { result in
-            Button(action: { addRestaurant(result) }) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(result.name)
-                        .font(.headline)
-                    
-                    Text(result.address)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+            if let existingRestaurant = findExistingRestaurant(for: result) {
+                NavigationLink(destination: RestaurantDetailView(restaurant: existingRestaurant)) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text(result.name)
+                                .font(.headline)
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                        }
+                        
+                        Text(result.address)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        
+                        Text("Already in your list")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .italic()
+                    }
                 }
+            } else {
+                Button(action: { addRestaurant(result) }) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(result.name)
+                            .font(.headline)
+                        
+                        Text(result.address)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .foregroundStyle(.primary)
             }
-            .foregroundStyle(.primary)
+        }
+    }
+    
+    private func findExistingRestaurant(for result: RestaurantSearchResult) -> Restaurant? {
+        // First try to find by ID
+        if let restaurant = existingRestaurants.first(where: { $0.id == result.id }) {
+            return restaurant
+        }
+        
+        // Then try to find by matching name and coordinates (within a small radius)
+        return existingRestaurants.first { restaurant in
+            let nameMatches = restaurant.name.lowercased() == result.name.lowercased()
+            let coordinateMatches = abs(restaurant.latitude - result.latitude) < 0.0001 &&
+                                  abs(restaurant.longitude - result.longitude) < 0.0001
+            return nameMatches && coordinateMatches
         }
     }
     
@@ -99,12 +137,10 @@ struct AddRestaurantView: View {
                 query: searchText,
                 location: locationManager.location
             )
-        } catch OpenStreetMapService.OSMError.invalidResponse {
-            errorMessage = "Unable to connect to restaurant service. Please try again."
-        } catch OpenStreetMapService.OSMError.decodingError {
-            errorMessage = "There was a problem processing the restaurant data."
+        } catch let error as OpenStreetMapService.OSMError {
+            errorMessage = error.localizedDescription
         } catch {
-            errorMessage = "An unexpected error occurred. Please try again."
+            errorMessage = "An unexpected error occurred: \(error.localizedDescription)"
         }
         
         isSearching = false

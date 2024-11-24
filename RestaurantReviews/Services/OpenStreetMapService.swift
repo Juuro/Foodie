@@ -4,12 +4,27 @@ import CoreLocation
 class OpenStreetMapService {
     private let baseURL = "https://nominatim.openstreetmap.org/search"
     
-    enum OSMError: Error {
+    enum OSMError: Error, LocalizedError {
         case invalidURL
         case networkError(Error)
-        case invalidResponse
+        case invalidResponse(Int)
         case decodingError(Error)
         case noResults
+        
+        var errorDescription: String? {
+            switch self {
+            case .invalidURL:
+                return "Invalid URL format"
+            case .networkError(let error):
+                return "Network error: \(error.localizedDescription)"
+            case .invalidResponse(let statusCode):
+                return "Server error (Status \(statusCode))"
+            case .decodingError(let error):
+                return "Failed to process response: \(error.localizedDescription)"
+            case .noResults:
+                return "No restaurants found matching your search"
+            }
+        }
     }
     
     struct NominatimResponse: Codable {
@@ -19,20 +34,66 @@ class OpenStreetMapService {
         let displayName: String
         let type: String?
         let name: String?
+        let address: Address?
         
         enum CodingKeys: String, CodingKey {
             case placeId = "place_id"
             case lat, lon
             case displayName = "display_name"
-            case type
-            case name
+            case type, name
+            case address
+        }
+        
+        struct Address: Codable {
+            let street: String?
+            let houseNumber: String?
+            let postcode: String?
+            let city: String?
+            let country: String?
+            
+            enum CodingKeys: String, CodingKey {
+                case street = "road"
+                case houseNumber = "house_number"
+                case postcode
+                case city
+                case country
+            }
         }
         
         func toSearchResult() -> RestaurantSearchResult {
+            var addressComponents: [String] = []
+            
+            if let address = address {
+                if let street = address.street {
+                    if let number = address.houseNumber {
+                        addressComponents.append("\(street) \(number)")
+                    } else {
+                        addressComponents.append(street)
+                    }
+                }
+                
+                var locationPart = ""
+                if let postcode = address.postcode {
+                    locationPart += postcode
+                }
+                if let city = address.city {
+                    locationPart += locationPart.isEmpty ? city : " \(city)"
+                }
+                if !locationPart.isEmpty {
+                    addressComponents.append(locationPart)
+                }
+                
+                if let country = address.country {
+                    addressComponents.append(country)
+                }
+            }
+            
+            let formattedAddress = addressComponents.isEmpty ? "Address not available" : addressComponents.joined(separator: "\n")
+            
             return RestaurantSearchResult(
                 id: String(placeId),
                 name: name ?? displayName.components(separatedBy: ",").first ?? "Unknown Name",
-                address: displayName,
+                address: formattedAddress,
                 latitude: Double(lat) ?? 0,
                 longitude: Double(lon) ?? 0
             )
@@ -73,9 +134,12 @@ class OpenStreetMapService {
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                throw OSMError.invalidResponse
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw OSMError.invalidResponse(0)
+            }
+            
+            guard (200...299).contains(httpResponse.statusCode) else {
+                throw OSMError.invalidResponse(httpResponse.statusCode)
             }
             
             let results = try JSONDecoder().decode([NominatimResponse].self, from: data)
@@ -92,6 +156,9 @@ class OpenStreetMapService {
         } catch let error as DecodingError {
             print("Decoding error: \(error)")
             throw OSMError.decodingError(error)
+        } catch let error as OSMError {
+            print("OSM error: \(error.localizedDescription)")
+            throw error
         } catch {
             print("Network error: \(error)")
             throw OSMError.networkError(error)

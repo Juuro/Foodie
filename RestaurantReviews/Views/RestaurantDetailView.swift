@@ -39,17 +39,18 @@ struct RestaurantDetailView: View {
                             .foregroundStyle(.secondary)
                     }
                     
-                    HStack {
+                    HStack(alignment: .top) {
                         Image(systemName: "location.fill")
                             .foregroundStyle(.secondary)
-                        Text(restaurant.address)
+                        Text(restaurant.formattedAddress)
                             .foregroundStyle(.secondary)
+                            .lineSpacing(4)
                     }
                 }
                 .padding(.horizontal)
                 
                 // Reviews section
-                ReviewsSection(visits: restaurant.visits.sorted { $0.date > $1.date })
+                ReviewsSection(restaurant: restaurant, visits: restaurant.visits.sorted { $0.date > $1.date })
             }
             .padding(.vertical)
         }
@@ -123,6 +124,13 @@ private struct MapPreview: View {
                     .foregroundStyle(.red)
             }
         }
+        .overlay(alignment: .bottomTrailing) {
+            Image(systemName: "arrow.triangle.turn.up.right.circle.fill")
+                .font(.title2)
+                .foregroundStyle(.blue)
+                .padding(8)
+        }
+        .contentShape(Rectangle())
         .onTapGesture {
             openInMaps()
         }
@@ -137,14 +145,28 @@ private struct MapPreview: View {
 }
 
 private struct ReviewsSection: View {
+    @Environment(\.modelContext) private var modelContext
+    let restaurant: Restaurant
     let visits: [Visit]
+    @State private var visitToEdit: Visit?
+    @State private var visitToDelete: Visit?
+    @State private var showingAddVisit = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Reviews")
-                .font(.title2)
-                .bold()
-                .padding(.horizontal)
+            HStack {
+                Text("Reviews")
+                    .font(.title2)
+                    .bold()
+                Spacer()
+                Button {
+                    showingAddVisit = true
+                } label: {
+                    Label("Add Review", systemImage: "plus.circle.fill")
+                        .foregroundStyle(.blue)
+                }
+            }
+            .padding(.horizontal)
             
             LazyVStack(spacing: 16) {
                 ForEach(Array(visits.enumerated()), id: \.element.id) { _, visit in
@@ -154,6 +176,22 @@ private struct ReviewsSection: View {
                             Spacer()
                             Text(visit.date.formatted(date: .abbreviated, time: .omitted))
                                 .foregroundStyle(.secondary)
+                            Menu {
+                                Button(role: .destructive) {
+                                    visitToDelete = visit
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                                
+                                Button {
+                                    visitToEdit = visit
+                                } label: {
+                                    Label("Edit", systemImage: "pencil")
+                                }
+                            } label: {
+                                Image(systemName: "ellipsis.circle")
+                                    .foregroundStyle(.blue)
+                            }
                         }
                         
                         if !visit.review.isEmpty {
@@ -182,8 +220,41 @@ private struct ReviewsSection: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
                     .padding(.horizontal)
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        Button(role: .destructive) {
+                            visitToDelete = visit
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
                 }
             }
+        }
+        .sheet(isPresented: $showingAddVisit) {
+            AddVisitView(restaurant: restaurant)
+        }
+        .sheet(item: $visitToEdit) { visit in
+            EditVisitView(visit: visit, restaurant: restaurant)
+        }
+        .alert("Delete Visit", isPresented: .constant(visitToDelete != nil)) {
+            Button("Cancel", role: .cancel) {
+                visitToDelete = nil
+            }
+            Button("Delete", role: .destructive) {
+                if let visit = visitToDelete {
+                    deleteVisit(visit)
+                }
+                visitToDelete = nil
+            }
+        } message: {
+            Text("Are you sure you want to delete this visit? This action cannot be undone.")
+        }
+    }
+    
+    private func deleteVisit(_ visit: Visit) {
+        if let index = restaurant.visits.firstIndex(where: { $0.id == visit.id }) {
+            restaurant.visits.remove(at: index)
+            modelContext.delete(visit)
         }
     }
 }

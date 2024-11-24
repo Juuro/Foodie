@@ -12,9 +12,10 @@ struct RestaurantRowView: View {
                 RatingView(rating: restaurant.averageRating)
             }
             
-            Text(restaurant.address)
+            Text(restaurant.formattedAddress)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+                .lineSpacing(4)
             
             if !restaurant.recentPhotos.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
