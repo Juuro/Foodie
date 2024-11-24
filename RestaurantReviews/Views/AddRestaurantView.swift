@@ -9,7 +9,7 @@ struct AddRestaurantView: View {
     @Query private var existingRestaurants: [Restaurant]
     
     @StateObject private var locationManager = LocationManager()
-    private let mapKitService = MapKitService()
+    private let restaurantService = RestaurantService()
     
     @State private var searchText = ""
     @State private var searchResults: [RestaurantSearchResult] = []
@@ -133,11 +133,11 @@ struct AddRestaurantView: View {
         errorMessage = nil
         
         do {
-            searchResults = try await mapKitService.searchRestaurants(
+            searchResults = try await restaurantService.searchRestaurants(
                 query: searchText,
                 location: locationManager.location
             )
-        } catch let error as MapKitService.MapKitError {
+        } catch let error as RestaurantService.ServiceError {
             errorMessage = error.localizedDescription
         } catch {
             errorMessage = "An unexpected error occurred: \(error.localizedDescription)"
@@ -152,7 +152,8 @@ struct AddRestaurantView: View {
             name: result.name,
             address: result.address,
             latitude: result.latitude,
-            longitude: result.longitude
+            longitude: result.longitude,
+            website: result.website
         )
         
         modelContext.insert(restaurant)

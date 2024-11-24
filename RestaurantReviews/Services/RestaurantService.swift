@@ -2,8 +2,8 @@ import Foundation
 import MapKit
 
 @MainActor
-class MapKitService {
-    enum MapKitError: Error, LocalizedError {
+class RestaurantService {
+    enum ServiceError: Error, LocalizedError {
         case noResults
         case searchError(Error)
         
@@ -50,15 +50,15 @@ class MapKitService {
             }
             
             guard !results.isEmpty else {
-                throw MapKitError.noResults
+                throw ServiceError.noResults
             }
             
             return results
             
-        } catch let error as MapKitError {
+        } catch let error as ServiceError {
             throw error
         } catch {
-            throw MapKitError.searchError(error)
+            throw ServiceError.searchError(error)
         }
     }
     
