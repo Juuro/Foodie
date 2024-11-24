@@ -137,12 +137,12 @@ struct RestaurantDetailView: View {
 
 private struct PhotosGridView: View {
     let photos: [Visit.Photo]
-    @State private var selectedPhoto: Visit.Photo?
+    @State private var selectedPhotoIndex: Int?
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
-                ForEach(photos, id: \.id) { photo in
+                ForEach(Array(photos.enumerated()), id: \.element.id) { index, photo in
                     if let image = photo.image {
                         image
                             .resizable()
@@ -150,20 +150,101 @@ private struct PhotosGridView: View {
                             .frame(width: 280, height: 200)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                             .onTapGesture {
-                                selectedPhoto = photo
+                                selectedPhotoIndex = index
                             }
                     }
                 }
             }
             .padding(.horizontal)
         }
-        .sheet(item: $selectedPhoto) { photo in
-            if let image = photo.image {
-                image
-                    .resizable()
-                    .scaledToFit()
-                    .ignoresSafeArea()
+        .fullScreenCover(item: Binding(
+            get: { selectedPhotoIndex.map { PhotoIdentifier(index: $0) } },
+            set: { selectedPhotoIndex = $0?.index }
+        )) { identifier in
+            PhotoViewer(photos: photos, initialIndex: identifier.index, isPresented: $selectedPhotoIndex)
+        }
+    }
+    
+    private struct PhotoIdentifier: Identifiable {
+        let index: Int
+        var id: Int { index }
+    }
+}
+
+private struct PhotoViewer: View {
+    let photos: [Visit.Photo]
+    let initialIndex: Int
+    @Binding var isPresented: Int?
+    @State private var currentIndex: Int
+    @State private var offset: CGSize = .zero
+    @State private var scale: CGFloat = 1.0
+    
+    init(photos: [Visit.Photo], initialIndex: Int, isPresented: Binding<Int?>) {
+        self.photos = photos
+        self.initialIndex = initialIndex
+        self._isPresented = isPresented
+        self._currentIndex = State(initialValue: initialIndex)
+    }
+    
+    var body: some View {
+        GeometryReader { geometry in
+            TabView(selection: $currentIndex) {
+                ForEach(Array(photos.enumerated()), id: \.offset) { index, photo in
+                    if let image = photo.image {
+                        image
+                            .resizable()
+                            .scaledToFit()
+                            .tag(index)
+                            .scaleEffect(scale)
+                            .offset(offset)
+                            .gesture(
+                                MagnificationGesture()
+                                    .onChanged { value in
+                                        scale = value
+                                    }
+                                    .onEnded { _ in
+                                        withAnimation {
+                                            scale = 1.0
+                                        }
+                                    }
+                            )
+                            .gesture(
+                                DragGesture()
+                                    .onChanged { value in
+                                        offset = value.translation
+                                    }
+                                    .onEnded { value in
+                                        withAnimation {
+                                            let height = value.translation.height
+                                            if abs(height) > 100 {
+                                                isPresented = nil
+                                            } else {
+                                                offset = .zero
+                                            }
+                                        }
+                                    }
+                            )
+                    }
+                }
             }
+            .tabViewStyle(.page(indexDisplayMode: .automatic))
+        }
+        .background(.black)
+        .ignoresSafeArea()
+        .overlay(alignment: .topTrailing) {
+            Button {
+                isPresented = nil
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title)
+                    .foregroundStyle(.white)
+                    .padding()
+            }
+        }
+        .overlay(alignment: .bottom) {
+            Text("\(currentIndex + 1) of \(photos.count)")
+                .foregroundStyle(.white)
+                .padding()
         }
     }
 }
@@ -263,6 +344,17 @@ private struct ReviewsSection: View {
     @State private var visitToEdit: Visit?
     @State private var visitToDelete: Visit?
     @State private var showingAddVisit = false
+    @State private var selectedPhotoIndex: Int?
+    
+    private struct PhotoIdentifier: Identifiable {
+        let index: Int
+        var id: Int { index }
+    }
+    
+    // Get all photos from all visits in order
+    var allPhotos: [Visit.Photo] {
+        visits.flatMap { $0.photos }
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -281,7 +373,7 @@ private struct ReviewsSection: View {
             .padding(.horizontal)
             
             LazyVStack(spacing: 16) {
-                ForEach(Array(visits.enumerated()), id: \.element.id) { _, visit in
+                ForEach(visits) { visit in
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             RatingView(rating: visit.rating)
@@ -314,13 +406,18 @@ private struct ReviewsSection: View {
                         if !visit.photos.isEmpty {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
-                                    ForEach(visit.photos) { photo in
+                                    ForEach(Array(visit.photos.enumerated()), id: \.element.id) { index, photo in
                                         if let image = photo.image {
                                             image
                                                 .resizable()
                                                 .scaledToFill()
                                                 .frame(width: 60, height: 60)
                                                 .clipShape(RoundedRectangle(cornerRadius: 8))
+                                                .onTapGesture {
+                                                    // Calculate global index for this photo
+                                                    let globalIndex = allPhotos.firstIndex(where: { $0.id == photo.id }) ?? 0
+                                                    selectedPhotoIndex = globalIndex
+                                                }
                                         }
                                     }
                                 }
@@ -332,12 +429,19 @@ private struct ReviewsSection: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
                     .padding(.horizontal)
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                    .swipeActions(edge: .trailing) {
                         Button(role: .destructive) {
                             visitToDelete = visit
                         } label: {
                             Label("Delete", systemImage: "trash")
                         }
+                        
+                        Button {
+                            visitToEdit = visit
+                        } label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+                        .tint(.blue)
                     }
                 }
             }
@@ -360,6 +464,12 @@ private struct ReviewsSection: View {
             }
         } message: {
             Text("Are you sure you want to delete this visit? This action cannot be undone.")
+        }
+        .fullScreenCover(item: Binding(
+            get: { selectedPhotoIndex.map { PhotoIdentifier(index: $0) } },
+            set: { selectedPhotoIndex = $0?.index }
+        )) { identifier in
+            PhotoViewer(photos: allPhotos, initialIndex: identifier.index, isPresented: $selectedPhotoIndex)
         }
     }
     
