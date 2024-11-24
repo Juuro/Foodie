@@ -27,7 +27,7 @@ struct RestaurantReviewsApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainTabView()
+            ContentView()
         }
         .modelContainer(sharedModelContainer)
     }
