@@ -29,9 +29,22 @@
 		B3B2B5C42CF3BA8F00C93E0E /* RestaurantReviewsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RestaurantReviewsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B3B2B5F42CF3C6AF00C93E0E /* Exceptions for "RestaurantReviews" folder in "RestaurantReviews" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B3B2B5A72CF3BA8D00C93E0E /* RestaurantReviews */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B3B2B5AA2CF3BA8D00C93E0E /* RestaurantReviews */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B3B2B5F42CF3C6AF00C93E0E /* Exceptions for "RestaurantReviews" folder in "RestaurantReviews" target */,
+			);
 			path = RestaurantReviews;
 			sourceTree = "<group>";
 		};
