@@ -95,7 +95,9 @@ class OpenStreetMapService {
                 name: name ?? displayName.components(separatedBy: ",").first ?? "Unknown Name",
                 address: formattedAddress,
                 latitude: Double(lat) ?? 0,
-                longitude: Double(lon) ?? 0
+                longitude: Double(lon) ?? 0,
+                website: nil,
+                mapItem: nil
             )
         }
     }

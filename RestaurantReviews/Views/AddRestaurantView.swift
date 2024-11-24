@@ -9,7 +9,7 @@ struct AddRestaurantView: View {
     @Query private var existingRestaurants: [Restaurant]
     
     @StateObject private var locationManager = LocationManager()
-    private let osmService = OpenStreetMapService()
+    private let mapKitService = MapKitService()
     
     @State private var searchText = ""
     @State private var searchResults: [RestaurantSearchResult] = []
@@ -133,11 +133,11 @@ struct AddRestaurantView: View {
         errorMessage = nil
         
         do {
-            searchResults = try await osmService.searchRestaurants(
+            searchResults = try await mapKitService.searchRestaurants(
                 query: searchText,
                 location: locationManager.location
             )
-        } catch let error as OpenStreetMapService.OSMError {
+        } catch let error as MapKitService.MapKitError {
             errorMessage = error.localizedDescription
         } catch {
             errorMessage = "An unexpected error occurred: \(error.localizedDescription)"
@@ -158,15 +158,6 @@ struct AddRestaurantView: View {
         modelContext.insert(restaurant)
         dismiss()
     }
-}
-
-// This would typically come from your API response
-struct RestaurantSearchResult: Identifiable {
-    let id: String
-    let name: String
-    let address: String
-    let latitude: Double
-    let longitude: Double
 }
 
 #Preview {

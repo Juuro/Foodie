@@ -11,13 +11,15 @@ final class Restaurant: Identifiable {
     var latitude: Double
     var longitude: Double
     var visits: [Visit]
+    var website: String?
     
-    init(id: String, name: String, address: String, latitude: Double, longitude: Double) {
+    init(id: String, name: String, address: String, latitude: Double, longitude: Double, website: String? = nil) {
         self.id = id
         self.name = name
         self.address = address
         self.latitude = latitude
         self.longitude = longitude
+        self.website = website
         self.visits = []
     }
     

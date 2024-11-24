@@ -28,7 +28,9 @@ class YelpService {
                 name: name,
                 address: location.displayAddress.joined(separator: ", "),
                 latitude: coordinates.latitude,
-                longitude: coordinates.longitude
+                longitude: coordinates.longitude,
+                website: nil,
+                mapItem: nil
             )
         }
     }

@@ -6,6 +6,15 @@ struct RestaurantDetailView: View {
     @State private var showingAddVisit = false
     let restaurant: Restaurant
     
+    var happyCowURL: URL? {
+        var components = URLComponents(string: "https://www.happycow.net/searchmap")
+        components?.queryItems = [
+            URLQueryItem(name: "location", value: "\(restaurant.latitude),\(restaurant.longitude)"),
+            URLQueryItem(name: "keyword", value: restaurant.name)
+        ]
+        return components?.url
+    }
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -45,6 +54,30 @@ struct RestaurantDetailView: View {
                         Text(restaurant.formattedAddress)
                             .foregroundStyle(.secondary)
                             .lineSpacing(4)
+                            .textSelection(.enabled)
+                    }
+                    
+                    if let websiteString = restaurant.website,
+                       let url = URL(string: websiteString) {
+                        Link(destination: url) {
+                            HStack {
+                                Image(systemName: "globe")
+                                    .foregroundStyle(.secondary)
+                                Text("Visit Website")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    
+                    if let url = happyCowURL {
+                        Link(destination: url) {
+                            HStack {
+                                Image(systemName: "link")
+                                    .foregroundStyle(.secondary)
+                                Text("View on HappyCow")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
                     }
                 }
                 .padding(.horizontal)

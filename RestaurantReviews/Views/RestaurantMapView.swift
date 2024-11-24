@@ -103,7 +103,8 @@ struct RestaurantAnnotationView: View {
         name: "Sample Restaurant",
         address: "123 Main St",
         latitude: 37.7749,
-        longitude: -122.4194
+        longitude: -122.4194,
+        website: nil
     )
     container.mainContext.insert(restaurant)
     
