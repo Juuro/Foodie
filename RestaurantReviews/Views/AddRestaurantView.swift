@@ -41,6 +41,10 @@ struct AddRestaurantView: View {
                     }
                 }
             }
+            .locationStatusBanner(status: locationManager.status, error: locationManager.error)
+            .onAppear {
+                locationManager.requestLocationPermission()
+            }
         }
     }
     

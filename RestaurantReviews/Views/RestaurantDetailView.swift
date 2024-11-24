@@ -3,7 +3,9 @@ import MapKit
 
 struct RestaurantDetailView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
     @State private var showingAddVisit = false
+    @State private var showingDeleteConfirmation = false
     let restaurant: Restaurant
     
     var happyCowURL: URL? {
@@ -90,14 +92,46 @@ struct RestaurantDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: { showingAddVisit = true }) {
-                    Image(systemName: "plus")
+                Menu {
+                    Button(action: { showingAddVisit = true }) {
+                        Label("Add Review", systemImage: "plus")
+                    }
+                    
+                    Button(role: .destructive) {
+                        showingDeleteConfirmation = true
+                    } label: {
+                        Label("Delete Restaurant", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
             }
         }
         .sheet(isPresented: $showingAddVisit) {
             AddVisitView(restaurant: restaurant)
         }
+        .alert("Delete Restaurant", isPresented: $showingDeleteConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                deleteRestaurant()
+            }
+        } message: {
+            if restaurant.visits.isEmpty {
+                Text("Are you sure you want to delete this restaurant?")
+            } else {
+                Text("Are you sure you want to delete this restaurant? This will also delete all \(restaurant.visits.count) reviews. This action cannot be undone.")
+            }
+        }
+    }
+    
+    private func deleteRestaurant() {
+        // First delete all visits
+        for visit in restaurant.visits {
+            modelContext.delete(visit)
+        }
+        // Then delete the restaurant
+        modelContext.delete(restaurant)
+        dismiss()
     }
 }
 
