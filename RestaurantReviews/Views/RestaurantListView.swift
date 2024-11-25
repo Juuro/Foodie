@@ -12,12 +12,14 @@ struct RestaurantListView: View {
         case name
         case rating
         case lastVisit
+        case lastAdded
         
         var label: String {
             switch self {
             case .name: "Name"
             case .rating: "Rating"
             case .lastVisit: "Last Visit"
+            case .lastAdded: "Last Added"
             }
         }
     }
@@ -37,6 +39,8 @@ struct RestaurantListView: View {
                 let firstDate = first.visits.max(by: { $0.date < $1.date })?.date ?? .distantPast
                 let secondDate = second.visits.max(by: { $0.date < $1.date })?.date ?? .distantPast
                 return firstDate > secondDate
+            case .lastAdded:
+                return first.createdAt > second.createdAt
             }
         }
     }
@@ -89,6 +93,8 @@ struct RestaurantListView: View {
                                     .tag(SortOption.rating)
                                 Label("Last Visit", systemImage: "clock")
                                     .tag(SortOption.lastVisit)
+                                Label("Last Added", systemImage: "calendar")
+                                    .tag(SortOption.lastAdded)
                             }
                         } label: {
                             Label("Sort", systemImage: "arrow.up.arrow.down")

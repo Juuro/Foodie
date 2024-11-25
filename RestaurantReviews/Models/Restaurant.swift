@@ -12,6 +12,7 @@ final class Restaurant: Identifiable {
     var longitude: Double
     var visits: [Visit]
     var website: String?
+    var createdAt: Date
     
     init(id: String, name: String, address: String, latitude: Double, longitude: Double, website: String? = nil) {
         self.id = id
@@ -21,6 +22,18 @@ final class Restaurant: Identifiable {
         self.longitude = longitude
         self.website = website
         self.visits = []
+        self.createdAt = Date()
+    }
+    
+    init(from previous: Restaurant) {
+        self.id = previous.id
+        self.name = previous.name
+        self.address = previous.address
+        self.latitude = previous.latitude
+        self.longitude = previous.longitude
+        self.website = previous.website
+        self.visits = previous.visits
+        self.createdAt = Date.distantPast
     }
     
     var coordinate: CLLocationCoordinate2D {
