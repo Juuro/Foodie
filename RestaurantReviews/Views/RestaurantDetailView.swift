@@ -176,8 +176,6 @@ private struct PhotoViewer: View {
     let initialIndex: Int
     @Binding var isPresented: Int?
     @State private var currentIndex: Int
-    @State private var offset: CGSize = .zero
-    @State private var scale: CGFloat = 1.0
     
     init(photos: [Visit.Photo], initialIndex: Int, isPresented: Binding<Int?>) {
         self.photos = photos
@@ -191,43 +189,21 @@ private struct PhotoViewer: View {
             TabView(selection: $currentIndex) {
                 ForEach(Array(photos.enumerated()), id: \.offset) { index, photo in
                     if let image = photo.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .tag(index)
-                            .scaleEffect(scale)
-                            .offset(offset)
-                            .gesture(
-                                MagnificationGesture()
-                                    .onChanged { value in
-                                        scale = value
-                                    }
-                                    .onEnded { _ in
-                                        withAnimation {
-                                            scale = 1.0
-                                        }
-                                    }
-                            )
-                            .gesture(
-                                DragGesture()
-                                    .onChanged { value in
-                                        offset = value.translation
-                                    }
-                                    .onEnded { value in
-                                        withAnimation {
-                                            let height = value.translation.height
-                                            if abs(height) > 100 {
-                                                isPresented = nil
-                                            } else {
-                                                offset = .zero
-                                            }
-                                        }
-                                    }
-                            )
+                        GeometryReader { proxy in
+                            image
+                                .resizable()
+                                .scaledToFit()
+                                .tag(index)
+                                .frame(
+                                    width: proxy.size.width,
+                                    height: proxy.size.height
+                                )
+                        }
                     }
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: .automatic))
+            .tabViewStyle(.page)
+            .indexViewStyle(.page)
         }
         .background(.black)
         .ignoresSafeArea()
