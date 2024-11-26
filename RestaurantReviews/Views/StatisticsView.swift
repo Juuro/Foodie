@@ -118,8 +118,8 @@ struct StatisticsView: View {
                         ForEach(ratingDistribution.reversed(), id: \.rating) { item in
                             HStack(alignment: .center, spacing: 12) {
                                 Text("\(item.rating) ★")
-                                    .font(.title2)
-                                    .frame(width: 60, alignment: .trailing)
+                                    .font(.title3)
+                                    .frame(width: 40, alignment: .trailing)
                                     .foregroundStyle(.primary)
                                 
                                 GeometryReader { geometry in
@@ -130,7 +130,7 @@ struct StatisticsView: View {
                                 .frame(height: 25)
                                 
                                 Text("\(item.count)")
-                                    .font(.title3)
+                                    .font(.body)
                                     .foregroundStyle(.secondary)
                                     .frame(width: 30, alignment: .trailing)
                             }
