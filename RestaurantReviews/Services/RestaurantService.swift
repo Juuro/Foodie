@@ -1,5 +1,6 @@
 import Foundation
 import MapKit
+import CoreLocation
 
 @MainActor
 class RestaurantService {
@@ -20,7 +21,16 @@ class RestaurantService {
     func searchRestaurants(query: String, location: CLLocation? = nil) async throws -> [RestaurantSearchResult] {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
-        request.pointOfInterestFilter = .init(including: [.restaurant])
+        
+        // Filter for gastronomic places
+        request.pointOfInterestFilter = MKPointOfInterestFilter(including: [
+            .restaurant,
+            .cafe,
+            .bakery,
+            .brewery,
+            .winery,
+            .foodMarket
+        ])
         
         if let location {
             let region = MKCoordinateRegion(
@@ -35,19 +45,25 @@ class RestaurantService {
             let search = MKLocalSearch(request: request)
             let response = try await search.start()
             
-            let results = response.mapItems.map { item -> RestaurantSearchResult in
-                let address = formatAddress(from: item.placemark)
-                
-                return RestaurantSearchResult(
-                    id: item.placemark.title ?? UUID().uuidString,
-                    name: item.name ?? "Unknown Restaurant",
-                    address: address,
-                    latitude: item.placemark.coordinate.latitude,
-                    longitude: item.placemark.coordinate.longitude,
-                    website: item.url?.absoluteString,
-                    mapItem: item
-                )
-            }
+            let results = response.mapItems
+                .filter { item in
+                    // Additional filtering to ensure we only get gastronomic places
+                    guard let category = item.pointOfInterestCategory else { return false }
+                    return isGastronomicPlace(category)
+                }
+                .map { item -> RestaurantSearchResult in
+                    let address = formatAddress(from: item.placemark)
+                    
+                    return RestaurantSearchResult(
+                        id: item.placemark.title ?? UUID().uuidString,
+                        name: item.name ?? "Unknown Restaurant",
+                        address: address,
+                        latitude: item.placemark.coordinate.latitude,
+                        longitude: item.placemark.coordinate.longitude,
+                        website: item.url?.absoluteString,
+                        mapItem: item
+                    )
+                }
             
             guard !results.isEmpty else {
                 throw ServiceError.noResults
@@ -60,6 +76,15 @@ class RestaurantService {
         } catch {
             throw ServiceError.searchError(error)
         }
+    }
+    
+    private func isGastronomicPlace(_ category: MKPointOfInterestCategory) -> Bool {
+        return category == .restaurant ||
+               category == .cafe ||
+               category == .bakery ||
+               category == .brewery ||
+               category == .winery ||
+               category == .foodMarket
     }
     
     private func formatAddress(from placemark: MKPlacemark) -> String {
