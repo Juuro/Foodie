@@ -114,14 +114,29 @@ struct StatisticsView: View {
                 
                 // Ratings Distribution
                 Section("Ratings Distribution") {
-                    Chart(ratingDistribution, id: \.rating) { item in
-                        BarMark(
-                            x: .value("Rating", item.rating),
-                            y: .value("Count", item.count)
-                        )
-                        .foregroundStyle(.yellow)
+                    VStack(spacing: 12) {
+                        ForEach(ratingDistribution.reversed(), id: \.rating) { item in
+                            HStack(alignment: .center, spacing: 12) {
+                                Text("\(item.rating) ★")
+                                    .font(.title2)
+                                    .frame(width: 60, alignment: .trailing)
+                                    .foregroundStyle(.primary)
+                                
+                                GeometryReader { geometry in
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color.yellow.gradient)
+                                        .frame(width: geometry.size.width * CGFloat(item.count) / CGFloat(maxCount))
+                                }
+                                .frame(height: 25)
+                                
+                                Text("\(item.count)")
+                                    .font(.title3)
+                                    .foregroundStyle(.secondary)
+                                    .frame(width: 30, alignment: .trailing)
+                            }
+                        }
                     }
-                    .frame(height: 200)
+                    .padding(.vertical)
                 }
                 
                 // Visits Over Time
@@ -262,6 +277,10 @@ struct StatisticsView: View {
         }
         
         return result
+    }
+    
+    private var maxCount: Int {
+        ratingDistribution.map { $0.count }.max() ?? 1
     }
 }
 
