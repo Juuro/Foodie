@@ -176,6 +176,9 @@ private struct PhotoViewer: View {
     let initialIndex: Int
     @Binding var isPresented: Int?
     @State private var currentIndex: Int
+    @State private var scale: CGFloat = 1.0
+    @State private var lastScale: CGFloat = 1.0
+    @State private var offset: CGSize = .zero
     
     init(photos: [Visit.Photo], initialIndex: Int, isPresented: Binding<Int?>) {
         self.photos = photos
@@ -194,6 +197,19 @@ private struct PhotoViewer: View {
                                 .resizable()
                                 .scaledToFit()
                                 .tag(index)
+                                .scaleEffect(scale)
+                                .offset(offset)
+                                .gesture(
+                                    MagnificationGesture()
+                                        .onChanged { value in
+                                            let delta = value / lastScale
+                                            lastScale = value
+                                            scale *= delta
+                                        }
+                                        .onEnded { _ in
+                                            lastScale = 1.0
+                                        }
+                                )
                                 .frame(
                                     width: proxy.size.width,
                                     height: proxy.size.height
@@ -204,6 +220,12 @@ private struct PhotoViewer: View {
             }
             .tabViewStyle(.page)
             .indexViewStyle(.page)
+            .onChange(of: currentIndex) {
+                // Reset zoom when changing photos
+                scale = 1.0
+                lastScale = 1.0
+                offset = .zero
+            }
         }
         .background(.black)
         .ignoresSafeArea()
