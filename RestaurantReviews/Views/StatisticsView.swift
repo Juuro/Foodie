@@ -42,128 +42,135 @@ struct StatisticsView: View {
     
     var body: some View {
         NavigationStack {
-            List {
+            VStack(spacing: 0) {
+                // Time Range Picker - Always visible
                 Picker("Time Range", selection: $timeRange) {
                     Text("Last 30 Days").tag(TimeRange.last30Days)
                     Text("Last 90 Days").tag(TimeRange.last90Days)
                     Text("Last 12 Months").tag(TimeRange.last12Months)
                     Text("All Time").tag(TimeRange.allTime)
                 }
+                .pickerStyle(.segmented)
+                .padding()
+                .background(.background)
                 
-                // General Statistics
-                Section("Overview") {
-                    StatCard(title: "Total Restaurants", value: "\(restaurants.count)")
-                    StatCard(title: "Total Visits", value: "\(filteredVisits.count)")
-                    StatCard(title: "Average Rating", value: String(format: "%.1f", averageRating))
-                    if let mostVisited = mostVisitedRestaurant {
-                        NavigationLink {
-                            RestaurantDetailView(restaurant: mostVisited.restaurant)
-                        } label: {
-                            StatCard(
-                                title: "Most Visited",
-                                value: mostVisited.restaurant.name,
-                                detail: "\(mostVisited.count) visits"
-                            )
+                // Scrollable content
+                List {
+                    // General Statistics
+                    Section("Overview") {
+                        StatCard(title: "Total Restaurants", value: "\(restaurants.count)")
+                        StatCard(title: "Total Visits", value: "\(filteredVisits.count)")
+                        StatCard(title: "Average Rating", value: String(format: "%.1f", averageRating))
+                        if let mostVisited = mostVisitedRestaurant {
+                            NavigationLink {
+                                RestaurantDetailView(restaurant: mostVisited.restaurant)
+                            } label: {
+                                StatCard(
+                                    title: "Most Visited",
+                                    value: mostVisited.restaurant.name,
+                                    detail: "\(mostVisited.count) visits"
+                                )
+                            }
                         }
                     }
-                }
-                
-                // Most Visited Restaurants
-                Section("Most Visited Restaurants") {
-                    ForEach(topVisitedRestaurants.prefix(5), id: \.restaurant.id) { item in
-                        NavigationLink {
-                            RestaurantDetailView(restaurant: item.restaurant)
-                        } label: {
+                    
+                    // Most Visited Restaurants
+                    Section("Most Visited Restaurants") {
+                        ForEach(topVisitedRestaurants.prefix(5), id: \.restaurant.id) { item in
+                            NavigationLink {
+                                RestaurantDetailView(restaurant: item.restaurant)
+                            } label: {
+                                HStack {
+                                    Text(item.restaurant.name)
+                                    Spacer()
+                                    Text("\(item.count) visits")
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Highest Rated Restaurants
+                    Section("Highest Rated Restaurants") {
+                        ForEach(topRatedRestaurants.prefix(5), id: \.restaurant.id) { item in
+                            NavigationLink {
+                                RestaurantDetailView(restaurant: item.restaurant)
+                            } label: {
+                                HStack {
+                                    Text(item.restaurant.name)
+                                    Spacer()
+                                    Text(String(format: "%.1f ★", item.rating))
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Most Visited Cities
+                    Section("Most Visited Cities") {
+                        ForEach(topVisitedCities.prefix(5), id: \.city) { item in
                             HStack {
-                                Text(item.restaurant.name)
+                                Text(item.city)
                                 Spacer()
                                 Text("\(item.count) visits")
                                     .foregroundStyle(.secondary)
                             }
                         }
                     }
-                }
-                
-                // Highest Rated Restaurants
-                Section("Highest Rated Restaurants") {
-                    ForEach(topRatedRestaurants.prefix(5), id: \.restaurant.id) { item in
-                        NavigationLink {
-                            RestaurantDetailView(restaurant: item.restaurant)
-                        } label: {
-                            HStack {
-                                Text(item.restaurant.name)
-                                Spacer()
-                                Text(String(format: "%.1f ★", item.rating))
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                }
-                
-                // Most Visited Cities
-                Section("Most Visited Cities") {
-                    ForEach(topVisitedCities.prefix(5), id: \.city) { item in
-                        HStack {
-                            Text(item.city)
-                            Spacer()
-                            Text("\(item.count) visits")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                }
-                
-                // Ratings Distribution
-                Section("Ratings Distribution") {
-                    VStack(spacing: 12) {
-                        ForEach(ratingDistribution.reversed(), id: \.rating) { item in
-                            HStack(alignment: .center, spacing: 12) {
-                                Text("\(item.rating) ★")
-                                    .font(.title3)
-                                    .frame(width: 40, alignment: .trailing)
-                                    .foregroundStyle(.primary)
-                                
-                                GeometryReader { geometry in
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(Color.yellow.gradient)
-                                        .frame(width: geometry.size.width * CGFloat(item.count) / CGFloat(maxCount))
+                    
+                    // Ratings Distribution
+                    Section("Ratings Distribution") {
+                        VStack(spacing: 12) {
+                            ForEach(ratingDistribution.reversed(), id: \.rating) { item in
+                                HStack(alignment: .center, spacing: 12) {
+                                    Text("\(item.rating) ★")
+                                        .font(.title3)
+                                        .frame(width: 40, alignment: .trailing)
+                                        .foregroundStyle(.primary)
+                                    
+                                    GeometryReader { geometry in
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .fill(Color.yellow.gradient)
+                                            .frame(width: geometry.size.width * CGFloat(item.count) / CGFloat(maxCount))
+                                    }
+                                    .frame(height: 25)
+                                    
+                                    Text("\(item.count)")
+                                        .font(.body)
+                                        .foregroundStyle(.secondary)
+                                        .frame(width: 30, alignment: .trailing)
                                 }
-                                .frame(height: 25)
-                                
-                                Text("\(item.count)")
-                                    .font(.body)
-                                    .foregroundStyle(.secondary)
-                                    .frame(width: 30, alignment: .trailing)
                             }
                         }
+                        .padding(.vertical)
                     }
-                    .padding(.vertical)
-                }
-                
-                // Visits Over Time
-                Section("Visits Over Time") {
-                    Chart(visitsOverTime, id: \.date) { item in
-                        LineMark(
-                            x: .value("Date", item.date),
-                            y: .value("Visits", item.count)
-                        )
-                        .foregroundStyle(.blue)
-                    }
-                    .frame(height: 200)
-                }
-                
-                // Photos Statistics
-                Section("Photos") {
-                    let totalPhotos = filteredVisits.reduce(0) { $0 + $1.photos.count }
-                    StatCard(title: "Total Photos", value: "\(totalPhotos)")
-                    if let mostPhotographed = mostPhotographedRestaurant {
-                        NavigationLink {
-                            RestaurantDetailView(restaurant: mostPhotographed.restaurant)
-                        } label: {
-                            StatCard(
-                                title: "Most Photographed",
-                                value: mostPhotographed.restaurant.name,
-                                detail: "\(mostPhotographed.count) photos"
+                    
+                    // Visits Over Time
+                    Section("Visits Over Time") {
+                        Chart(visitsOverTime, id: \.date) { item in
+                            LineMark(
+                                x: .value("Date", item.date),
+                                y: .value("Visits", item.count)
                             )
+                            .foregroundStyle(.blue)
+                        }
+                        .frame(height: 200)
+                    }
+                    
+                    // Photos Statistics
+                    Section("Photos") {
+                        let totalPhotos = filteredVisits.reduce(0) { $0 + $1.photos.count }
+                        StatCard(title: "Total Photos", value: "\(totalPhotos)")
+                        if let mostPhotographed = mostPhotographedRestaurant {
+                            NavigationLink {
+                                RestaurantDetailView(restaurant: mostPhotographed.restaurant)
+                            } label: {
+                                StatCard(
+                                    title: "Most Photographed",
+                                    value: mostPhotographed.restaurant.name,
+                                    detail: "\(mostPhotographed.count) photos"
+                                )
+                            }
                         }
                     }
                 }
@@ -207,6 +214,7 @@ struct StatisticsView: View {
                     filteredRestaurantVisits.reduce(0.0) { $0 + $1.rating } / Double(filteredRestaurantVisits.count)
                 return (restaurant: restaurant, rating: rating)
             }
+            .filter { $0.rating > 0 }
             .sorted { $0.rating > $1.rating }
     }
     
@@ -218,7 +226,9 @@ struct StatisticsView: View {
             let visitCount = restaurant.visits.filter { visit in
                 filteredVisits.contains { $0.id == visit.id }
             }.count
-            cityCounts[city, default: 0] += visitCount
+            if visitCount > 0 {
+                cityCounts[city, default: 0] += visitCount
+            }
         }
         
         return cityCounts
@@ -267,10 +277,22 @@ struct StatisticsView: View {
         
         var result: [(date: Date, count: Int)] = []
         var currentDate = visits.first?.date ?? Date()
-        let endDate = visits.last?.date ?? Date()
+        let endDate = Date()
+        
+        let interval: Calendar.Component
+        switch timeRange {
+        case .last30Days:
+            interval = .day
+        case .last90Days:
+            interval = .weekOfYear
+        case .last12Months:
+            interval = .month
+        case .allTime:
+            interval = .month
+        }
         
         while currentDate <= endDate {
-            let periodEnd = calendar.date(byAdding: .month, value: 1, to: currentDate) ?? currentDate
+            let periodEnd = calendar.date(byAdding: interval, value: 1, to: currentDate) ?? currentDate
             let count = visits.filter { $0.date >= currentDate && $0.date < periodEnd }.count
             result.append((date: currentDate, count: count))
             currentDate = periodEnd
