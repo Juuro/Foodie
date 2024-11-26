@@ -273,12 +273,25 @@ struct StatisticsView: View {
     private var visitsOverTime: [(date: Date, count: Int)] {
         let calendar = Calendar.current
         let visits = filteredVisits.sorted { $0.date < $1.date }
-        guard !visits.isEmpty else { return [] }
         
-        var result: [(date: Date, count: Int)] = []
-        var currentDate = visits.first?.date ?? Date()
+        // Get start date based on time range
+        let startDate: Date
+        switch timeRange {
+        case .last30Days:
+            startDate = calendar.date(byAdding: .day, value: -30, to: Date()) ?? Date()
+        case .last90Days:
+            startDate = calendar.date(byAdding: .day, value: -90, to: Date()) ?? Date()
+        case .last12Months:
+            startDate = calendar.date(byAdding: .month, value: -12, to: Date()) ?? Date()
+        case .allTime:
+            startDate = visits.first?.date ?? Date()
+        }
+        
         let endDate = Date()
+        var currentDate = startDate
+        var result: [(date: Date, count: Int)] = []
         
+        // Determine interval based on time range
         let interval: Calendar.Component
         switch timeRange {
         case .last30Days:
@@ -291,11 +304,14 @@ struct StatisticsView: View {
             interval = .month
         }
         
+        // Create data points for each interval
         while currentDate <= endDate {
-            let periodEnd = calendar.date(byAdding: interval, value: 1, to: currentDate) ?? currentDate
-            let count = visits.filter { $0.date >= currentDate && $0.date < periodEnd }.count
-            result.append((date: currentDate, count: count))
-            currentDate = periodEnd
+            let nextDate = calendar.date(byAdding: interval, value: 1, to: currentDate) ?? currentDate
+            let periodVisits = visits.filter { visit in
+                visit.date >= currentDate && visit.date < nextDate
+            }
+            result.append((date: currentDate, count: periodVisits.count))
+            currentDate = nextDate
         }
         
         return result
