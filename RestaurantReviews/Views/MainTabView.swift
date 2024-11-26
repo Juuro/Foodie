@@ -12,6 +12,11 @@ struct MainTabView: View {
                 .tabItem {
                     Label("Map", systemImage: "map")
                 }
+            
+            StatisticsView()
+                .tabItem {
+                    Label("Statistics", systemImage: "chart.bar")
+                }
         }
     }
 } 
