@@ -19,10 +19,10 @@ struct RestaurantPreview: View {
                     .lineSpacing(4)
                     .multilineTextAlignment(.leading)
                 
-                if !restaurant.recentPhotos.isEmpty {
+                if !restaurant.allPhotos.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
-                            ForEach(restaurant.recentPhotos, id: \.id) { photo in
+                            ForEach(restaurant.allPhotos.prefix(3), id: \.id) { photo in
                                 if let image = photo.image {
                                     image
                                         .resizable()

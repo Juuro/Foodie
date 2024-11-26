@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import SwiftData
 
 struct RestaurantDetailView: View {
     @Environment(\.modelContext) private var modelContext
@@ -31,8 +32,8 @@ struct RestaurantDetailView: View {
                 .padding(.horizontal)
                 
                 // Recent photos
-                if !restaurant.recentPhotos.isEmpty {
-                    PhotosGridView(photos: restaurant.recentPhotos)
+                if !restaurant.allPhotos.isEmpty {
+                    PhotosGridView(photos: restaurant.allPhotos)
                 }
                 
                 // Map preview
@@ -139,10 +140,17 @@ private struct PhotosGridView: View {
     let photos: [Visit.Photo]
     @State private var selectedPhotoIndex: Int?
     
+    // Get all photos sorted by date (newest first)
+    var sortedPhotos: [Visit.Photo] {
+        // Since we're getting photos from visits, they're already in order
+        // as they're passed from the parent view
+        photos
+    }
+    
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
-                ForEach(Array(photos.enumerated()), id: \.element.id) { index, photo in
+                ForEach(Array(sortedPhotos.enumerated()), id: \.element.id) { index, photo in
                     if let image = photo.image {
                         image
                             .resizable()
@@ -161,7 +169,7 @@ private struct PhotosGridView: View {
             get: { selectedPhotoIndex.map { PhotoIdentifier(index: $0) } },
             set: { selectedPhotoIndex = $0?.index }
         )) { identifier in
-            PhotoViewer(photos: photos, initialIndex: identifier.index, isPresented: $selectedPhotoIndex)
+            PhotoViewer(photos: sortedPhotos, initialIndex: identifier.index, isPresented: $selectedPhotoIndex)
         }
     }
     

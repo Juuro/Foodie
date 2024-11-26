@@ -45,7 +45,9 @@ final class Restaurant: Identifiable {
         return visits.reduce(0.0) { $0 + $1.rating } / Double(visits.count)
     }
     
-    var recentPhotos: [Visit.Photo] {
-        Array(visits.flatMap { $0.photos }.prefix(3))
+    var allPhotos: [Visit.Photo] {
+        visits
+            .sorted { $0.date > $1.date }
+            .flatMap { $0.photos }
     }
 } 
