@@ -373,7 +373,7 @@ private struct ReviewsSection: View {
                     showingAddVisit = true
                 } label: {
                     Label("Add Review", systemImage: "plus.circle.fill")
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.pink)
                 }
             }
             .padding(.horizontal)
