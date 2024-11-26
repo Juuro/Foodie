@@ -1,6 +1,6 @@
 //
 //  Item.swift
-//  RestaurantReviews
+//  FoodieFootprints
 //
 //  Created by Sebastian Engel on 24.11.24.
 //

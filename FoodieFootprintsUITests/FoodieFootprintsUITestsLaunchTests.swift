@@ -1,13 +1,13 @@
 //
-//  RestaurantReviewsUITestsLaunchTests.swift
-//  RestaurantReviewsUITests
+//  FoodieFootprintsUITestsLaunchTests.swift
+//  FoodieFootprintsUITests
 //
 //  Created by Sebastian Engel on 24.11.24.
 //
 
 import XCTest
 
-final class RestaurantReviewsUITestsLaunchTests: XCTestCase {
+final class FoodieFootprintsUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

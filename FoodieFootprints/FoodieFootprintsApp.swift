@@ -1,6 +1,6 @@
 //
-//  RestaurantReviewsApp.swift
-//  RestaurantReviews
+//  FoodieFootprintsApp.swift
+//  FoodieFootprints
 //
 //  Created by Sebastian Engel on 24.11.24.
 //
@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct RestaurantReviewsApp: App {
+struct FoodieFootprintsApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Restaurant.self,

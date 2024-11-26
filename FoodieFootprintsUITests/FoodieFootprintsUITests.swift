@@ -1,13 +1,13 @@
 //
-//  RestaurantReviewsUITests.swift
-//  RestaurantReviewsUITests
+//  FoodieFootprintsUITests.swift
+//  FoodieFootprintsUITests
 //
 //  Created by Sebastian Engel on 24.11.24.
 //
 
 import XCTest
 
-final class RestaurantReviewsUITests: XCTestCase {
+final class FoodieFootprintsUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
