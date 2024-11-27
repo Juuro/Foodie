@@ -23,10 +23,6 @@ struct RestaurantMapView: View {
                     }
                 }
             }
-            .mapControls {
-                MapUserLocationButton()
-                MapCompass()
-            }
             .overlay(alignment: .bottom) {
                 if let restaurant = selectedRestaurant {
                     RestaurantPreview(restaurant: restaurant)

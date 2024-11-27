@@ -8,7 +8,6 @@ struct AddRestaurantView: View {
     @Environment(\.dismiss) private var dismiss
     @Query private var existingRestaurants: [Restaurant]
     
-    @StateObject private var locationManager = LocationManager()
     private let restaurantService = RestaurantService()
     
     @State private var searchText = ""
@@ -40,10 +39,6 @@ struct AddRestaurantView: View {
                         dismiss()
                     }
                 }
-            }
-            .locationStatusBanner(status: locationManager.status, error: locationManager.error)
-            .onAppear {
-                locationManager.requestLocationPermission()
             }
         }
     }
@@ -139,7 +134,7 @@ struct AddRestaurantView: View {
         do {
             searchResults = try await restaurantService.searchRestaurants(
                 query: searchText,
-                location: locationManager.location
+                location: nil
             )
         } catch let error as RestaurantService.ServiceError {
             errorMessage = error.localizedDescription
