@@ -18,9 +18,7 @@ struct FoodieFootprintsApp: App {
         ])
         
         do {
-            return try ModelContainer(for: schema, configurations: [
-                ModelConfiguration(isStoredInMemoryOnly: true)
-            ])
+            return try ModelContainer(for: schema)
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }

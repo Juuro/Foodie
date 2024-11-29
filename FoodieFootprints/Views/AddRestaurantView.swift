@@ -14,6 +14,7 @@ struct AddRestaurantView: View {
     @State private var searchResults: [RestaurantSearchResult] = []
     @State private var isSearching = false
     @State private var errorMessage: String?
+    @FocusState private var isSearchFieldFocused: Bool
     
     var body: some View {
         NavigationStack {
@@ -40,6 +41,9 @@ struct AddRestaurantView: View {
                     }
                 }
             }
+            .onAppear {
+                isSearchFieldFocused = true
+            }
         }
     }
     
@@ -51,6 +55,7 @@ struct AddRestaurantView: View {
             TextField("Search for a restaurant", text: $searchText)
                 .textFieldStyle(.plain)
                 .autocorrectionDisabled()
+                .focused($isSearchFieldFocused)
                 .onSubmit {
                     Task {
                         await searchRestaurants()

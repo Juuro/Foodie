@@ -9,18 +9,29 @@ struct RestaurantMapView: View {
     
     var body: some View {
         NavigationStack {
-            Map(position: $cameraPosition) {
-                ForEach(restaurants) { restaurant in
-                    Annotation(
-                        restaurant.name,
-                        coordinate: restaurant.coordinate,
-                        anchor: .bottom
-                    ) {
-                        RestaurantAnnotationView(restaurant: restaurant)
-                            .onTapGesture {
-                                selectedRestaurant = restaurant
-                            }
+            ZStack {
+                Map(position: $cameraPosition) {
+                    ForEach(restaurants) { restaurant in
+                        Annotation(
+                            restaurant.name,
+                            coordinate: restaurant.coordinate,
+                            anchor: .bottom
+                        ) {
+                            RestaurantAnnotationView(restaurant: restaurant)
+                                .onTapGesture {
+                                    selectedRestaurant = restaurant
+                                }
+                        }
                     }
+                }
+                
+                // Invisible button covering the whole map to handle deselection
+                if selectedRestaurant != nil {
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            selectedRestaurant = nil
+                        }
                 }
             }
             .overlay(alignment: .bottom) {
@@ -29,8 +40,6 @@ struct RestaurantMapView: View {
                         .padding()
                 }
             }
-            .navigationTitle("Your Restaurants")
-            .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 setInitialRegion()
             }
