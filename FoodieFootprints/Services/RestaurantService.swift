@@ -111,11 +111,6 @@ class RestaurantService {
             components.append(locationPart)
         }
         
-        // Country
-        if let country = placemark.country {
-            components.append(country)
-        }
-        
         return components.isEmpty ? "Address not available" : components.joined(separator: "\n")
     }
 } 
