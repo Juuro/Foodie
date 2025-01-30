@@ -12,27 +12,31 @@ struct AddVisitView: View {
     @State private var photos: [Visit.Photo] = []
     @State private var isLoading = false
     
+    private var isValid: Bool {
+        !review.isEmpty
+    }
+    
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    DatePicker("Visit Date", selection: $date, displayedComponents: .date)
+                    DatePicker(String(localized: "Visit Date"), selection: $date, displayedComponents: .date)
                     
                     HStack {
-                        Text("Rating")
+                        Text(String(localized: "Rating"))
                         Spacer()
                         RatingControl(rating: $rating)
                     }
                 }
                 
-                Section("Review") {
+                Section(String(localized: "Review")) {
                     TextEditor(text: $review)
                         .frame(minHeight: 100)
                 }
                 
-                Section("Photos") {
+                Section(String(localized: "Photos")) {
                     PhotosPicker(selection: $selectedItems, matching: .images) {
-                        Label("Select Photos", systemImage: "photo.on.rectangle.angled")
+                        Label(String(localized: "Select Photos"), systemImage: "photo.on.rectangle.angled")
                     }
                     
                     if !photos.isEmpty {
@@ -52,18 +56,20 @@ struct AddVisitView: View {
                     }
                 }
             }
-            .navigationTitle("Add Visit")
+            .navigationTitle(String(localized: "Add Review"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(String(localized: "Cancel")) {
                         dismiss()
                     }
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(String(localized: "Save")) {
                         saveVisit()
                     }
+                    .disabled(!isValid)
                 }
             }
             .onChange(of: selectedItems) {

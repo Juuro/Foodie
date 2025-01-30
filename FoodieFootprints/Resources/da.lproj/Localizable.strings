@@ -1,0 +1,34 @@
+// Danish
+"Restaurants" = "Restauranter";
+"No Restaurants Yet" = "Ingen restauranter endnu";
+"Add Your First Restaurant" = "Tilføj din første restaurant";
+"Search your restaurants" = "Søg i dine restauranter";
+"Sort By" = "Sortér efter";
+"Name" = "Navn";
+"Rating" = "Bedømmelse";
+"Last Visit" = "Sidste besøg";
+"Last Added" = "Sidst tilføjet";
+"Add Restaurant" = "Tilføj restaurant";
+"Sort" = "Sortér";
+
+// AddRestaurantView
+"Cancel" = "Annuller";
+"Search for a restaurant" = "Søg efter en restaurant";
+"No Results" = "Ingen resultater";
+"Try a different search term" = "Prøv et andet søgeord";
+"Already in your list" = "Allerede i din liste";
+
+// RestaurantDetailView
+"Delete Restaurant" = "Slet restaurant";
+"Add Review" = "Tilføj anmeldelse";
+"visits" = "besøg";
+"Visit Website" = "Besøg hjemmeside";
+"View on HappyCow" = "Se på HappyCow";
+"Reviews" = "Anmeldelser";
+"Are you sure you want to delete this restaurant?" = "Er du sikker på, at du vil slette denne restaurant?";
+"Are you sure you want to delete this restaurant? This will also delete all %lld reviews. This action cannot be undone." = "Er du sikker på, at du vil slette denne restaurant? Dette vil også slette alle %lld anmeldelser. Denne handling kan ikke fortrydes.";
+
+// RestaurantService
+"No restaurants found matching your search" = "Ingen restauranter fundet der matcher din søgning";
+"Search failed: %@" = "Søgning mislykkedes: %@";
+"Address not available" = "Adresse ikke tilgængelig"; 

@@ -228,6 +228,23 @@
 			knownRegions = (
 				en,
 				Base,
+				de,
+				fr,
+				it,
+				ja,
+				hi,
+				nl,
+				da,
+				pt,
+				es,
+				is,
+				sv,
+				fi,
+				ru,
+				uk,
+				pl,
+				no,
+				nb,
 			);
 			mainGroup = B3B2B59F2CF3BA8D00C93E0E;
 			minimizedProjectReferenceProxies = 1;
@@ -431,7 +448,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"FoodieFootprints/Preview Content\"";
 				DEVELOPMENT_TEAM = A8L9TRSZCR;
 				ENABLE_PREVIEWS = YES;
@@ -473,7 +490,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"FoodieFootprints/Preview Content\"";
 				DEVELOPMENT_TEAM = A8L9TRSZCR;
 				ENABLE_PREVIEWS = YES;

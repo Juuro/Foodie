@@ -5,17 +5,17 @@ struct MainTabView: View {
         TabView {
             RestaurantListView()
                 .tabItem {
-                    Label("Restaurants", systemImage: "fork.knife")
+                    Label(String(localized: "Restaurants"), systemImage: "fork.knife")
                 }
             
-            RestaurantMapView()
+            MapView()
                 .tabItem {
-                    Label("Map", systemImage: "map")
+                    Label(String(localized: "Map"), systemImage: "map")
                 }
             
             StatisticsView()
                 .tabItem {
-                    Label("Statistics", systemImage: "chart.bar")
+                    Label(String(localized: "Statistics"), systemImage: "chart.bar")
                 }
         }
     }

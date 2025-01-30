@@ -58,15 +58,17 @@ struct StatisticsView: View {
                 List {
                     // General Statistics
                     Section("Overview") {
-                        StatCard(title: "Total Restaurants", value: "\(restaurants.count)")
-                        StatCard(title: "Total Visits", value: "\(filteredVisits.count)")
-                        StatCard(title: "Average Rating", value: String(format: "%.1f", averageRating))
+                        StatCard(title: String(localized: "Total Restaurants"), value: "\(restaurants.count)")
+                        StatCard(title: String(localized: "Total Visits"), value: "\(filteredVisits.count)")
+                        if let averageRating = calculateAverageRating() {
+                            StatCard(title: String(localized: "Average Rating"), value: String(format: "%.1f", averageRating))
+                        }
                         if let mostVisited = mostVisitedRestaurant {
                             NavigationLink {
                                 RestaurantDetailView(restaurant: mostVisited.restaurant)
                             } label: {
                                 StatCard(
-                                    title: "Most Visited",
+                                    title: String(localized: "Most Visited"),
                                     value: mostVisited.restaurant.name,
                                     detail: "\(mostVisited.count) visits"
                                 )
@@ -175,14 +177,14 @@ struct StatisticsView: View {
                     }
                 }
             }
-            .navigationTitle("Statistics")
+            .navigationTitle(String(localized: "Statistics"))
         }
     }
     
-    private var averageRating: Double {
-        guard !filteredVisits.isEmpty else { return 0 }
-        let sum = filteredVisits.reduce(0.0) { $0 + $1.rating }
-        return sum / Double(filteredVisits.count)
+    private func calculateAverageRating() -> Double? {
+        let restaurantsWithRatings = restaurants.filter { $0.averageRating > 0 }
+        guard !restaurantsWithRatings.isEmpty else { return nil }
+        return restaurantsWithRatings.reduce(0.0) { $0 + $1.averageRating } / Double(restaurantsWithRatings.count)
     }
     
     private var topVisitedRestaurants: [(restaurant: Restaurant, count: Int)] {

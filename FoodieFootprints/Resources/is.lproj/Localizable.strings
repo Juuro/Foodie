@@ -1,0 +1,34 @@
+// Icelandic
+"Restaurants" = "Veitingastaðir";
+"No Restaurants Yet" = "Engir veitingastaðir enn";
+"Add Your First Restaurant" = "Bættu við fyrsta veitingastaðnum";
+"Search your restaurants" = "Leita í veitingastöðum þínum";
+"Sort By" = "Raða eftir";
+"Name" = "Nafn";
+"Rating" = "Einkunn";
+"Last Visit" = "Síðasta heimsókn";
+"Last Added" = "Síðast bætt við";
+"Add Restaurant" = "Bæta við veitingastað";
+"Sort" = "Raða";
+
+// AddRestaurantView
+"Cancel" = "Hætta við";
+"Search for a restaurant" = "Leita að veitingastað";
+"No Results" = "Engar niðurstöður";
+"Try a different search term" = "Prófaðu önnur leitarorð";
+"Already in your list" = "Þegar á listanum þínum";
+
+// RestaurantDetailView
+"Delete Restaurant" = "Eyða veitingastað";
+"Add Review" = "Bæta við umsögn";
+"visits" = "heimsóknir";
+"Visit Website" = "Heimsækja vefsíðu";
+"View on HappyCow" = "Skoða á HappyCow";
+"Reviews" = "Umsagnir";
+"Are you sure you want to delete this restaurant?" = "Ertu viss um að þú viljir eyða þessum veitingastað?";
+"Are you sure you want to delete this restaurant? This will also delete all %lld reviews. This action cannot be undone." = "Ertu viss um að þú viljir eyða þessum veitingastað? Þetta mun einnig eyða öllum %lld umsögnum. Þessa aðgerð er ekki hægt að afturkalla.";
+
+// RestaurantService
+"No restaurants found matching your search" = "Engir veitingastaðir fundust sem passa við leitina þína";
+"Search failed: %@" = "Leit mistókst: %@";
+"Address not available" = "Heimilisfang ekki tiltækt"; 

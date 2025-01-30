@@ -49,7 +49,7 @@ struct AddRestaurantView: View {
                     } else if !searchText.isEmpty {
                         if searchResults.isEmpty {
                             ContentUnavailableView {
-                                Label("No Results", systemImage: "magnifyingglass")
+                                Label(String(localized: "No Results"), systemImage: "magnifyingglass")
                             } description: {
                                 Text("Try a different search term")
                             }
@@ -61,11 +61,11 @@ struct AddRestaurantView: View {
                     }
                 }
             }
-            .navigationTitle("Add Restaurant")
+            .navigationTitle(String(localized: "Add Restaurant"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") {
+                    Button(String(localized: "Cancel")) {
                         dismiss()
                     }
                 }
@@ -91,7 +91,7 @@ struct AddRestaurantView: View {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(.secondary)
             
-            TextField("Search for a restaurant", text: $searchText)
+            TextField(String(localized: "Search for a restaurant"), text: $searchText)
                 .textFieldStyle(.plain)
                 .autocorrectionDisabled()
                 .focused($isSearchFieldFocused)
@@ -281,7 +281,7 @@ private struct ExistingRestaurantRow: View {
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                 
-                Text("Already in your list")
+                Text(String(localized: "Already in your list"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .italic()

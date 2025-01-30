@@ -28,23 +28,23 @@ struct EditVisitView: View {
         NavigationStack {
             Form {
                 Section {
-                    DatePicker("Visit Date", selection: $date, displayedComponents: .date)
+                    DatePicker(String(localized: "Visit Date"), selection: $date, displayedComponents: .date)
                     
                     HStack {
-                        Text("Rating")
+                        Text(String(localized: "Rating"))
                         Spacer()
                         RatingControl(rating: $rating)
                     }
                 }
                 
-                Section("Review") {
+                Section(String(localized: "Review")) {
                     TextEditor(text: $review)
                         .frame(minHeight: 100)
                 }
                 
-                Section("Photos") {
+                Section(String(localized: "Photos")) {
                     PhotosPicker(selection: $selectedItems, matching: .images) {
-                        Label("Add More Photos", systemImage: "photo.on.rectangle.angled")
+                        Label(String(localized: "Add More Photos"), systemImage: "photo.on.rectangle.angled")
                     }
                     
                     if !photos.isEmpty {
@@ -81,24 +81,26 @@ struct EditVisitView: View {
                     } label: {
                         HStack {
                             Spacer()
-                            Text("Delete Visit")
+                            Text(String(localized: "Delete Review"))
                             Spacer()
                         }
                     }
                 }
             }
-            .navigationTitle("Edit Visit")
+            .navigationTitle(String(localized: "Edit Review"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(String(localized: "Cancel")) {
                         dismiss()
                     }
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        saveChanges()
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(String(localized: "Save")) {
+                        saveVisit()
                     }
+                    .disabled(!isValid)
                 }
             }
             .onChange(of: selectedItems) {
@@ -112,15 +114,19 @@ struct EditVisitView: View {
                         .background(.ultraThinMaterial)
                 }
             }
-            .alert("Delete Visit", isPresented: $showingDeleteConfirmation) {
-                Button("Cancel", role: .cancel) { }
-                Button("Delete", role: .destructive) {
+            .alert(String(localized: "Delete Review"), isPresented: $showingDeleteConfirmation) {
+                Button(String(localized: "Cancel"), role: .cancel) { }
+                Button(String(localized: "Delete"), role: .destructive) {
                     deleteVisit()
                 }
             } message: {
-                Text("Are you sure you want to delete this visit? This action cannot be undone.")
+                Text(String(localized: "Are you sure you want to delete this review? This action cannot be undone."))
             }
         }
+    }
+    
+    private var isValid: Bool {
+        !review.isEmpty
     }
     
     private func loadPhotos() async {
@@ -140,7 +146,7 @@ struct EditVisitView: View {
         photos.removeAll { $0.id == photo.id }
     }
     
-    private func saveChanges() {
+    private func saveVisit() {
         visit.date = date
         visit.rating = rating
         visit.review = review
