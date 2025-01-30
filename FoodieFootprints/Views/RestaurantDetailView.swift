@@ -46,16 +46,12 @@ struct RestaurantDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Image(systemName: "clock.fill")
-                            .foregroundStyle(.secondary)
                         Text("\(restaurant.visits.count) visits")
-                            .foregroundStyle(.secondary)
                     }
                     
                     HStack(alignment: .top) {
                         Image(systemName: "location.fill")
-                            .foregroundStyle(.secondary)
                         Text(restaurant.formattedAddress)
-                            .foregroundStyle(.secondary)
                             .lineSpacing(4)
                             .textSelection(.enabled)
                     }
@@ -65,9 +61,7 @@ struct RestaurantDetailView: View {
                         Link(destination: url) {
                             HStack {
                                 Image(systemName: "globe")
-                                    .foregroundStyle(.secondary)
                                 Text("Visit Website")
-                                    .foregroundStyle(.secondary)
                             }
                         }
                     }
@@ -76,9 +70,7 @@ struct RestaurantDetailView: View {
                         Link(destination: url) {
                             HStack {
                                 Image(systemName: "link")
-                                    .foregroundStyle(.secondary)
                                 Text("View on HappyCow")
-                                    .foregroundStyle(.secondary)
                             }
                         }
                     }
