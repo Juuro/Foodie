@@ -6,7 +6,7 @@ struct RestaurantListView: View {
     @Query private var restaurants: [Restaurant]
     @State private var searchText = ""
     @State private var showingAddRestaurant = false
-    @State private var sortOption: SortOption = .name
+    @State private var sortOption: SortOption = .lastVisit
     
     enum SortOption {
         case name
@@ -36,6 +36,15 @@ struct RestaurantListView: View {
             case .rating:
                 return first.averageRating > second.averageRating
             case .lastVisit:
+                if first.visits.isEmpty && second.visits.isEmpty {
+                    return first.createdAt > second.createdAt
+                }
+                if first.visits.isEmpty {
+                    return false
+                }
+                if second.visits.isEmpty {
+                    return true
+                }
                 let firstDate = first.visits.max(by: { $0.date < $1.date })?.date ?? .distantPast
                 let secondDate = second.visits.max(by: { $0.date < $1.date })?.date ?? .distantPast
                 return firstDate > secondDate
@@ -78,7 +87,7 @@ struct RestaurantListView: View {
                         }
                         .onDelete(perform: deleteRestaurants)
                     }
-                    .searchable(text: $searchText, prompt: "Search restaurants")
+                    .searchable(text: $searchText, prompt: "Search your restaurants")
                 }
             }
             .navigationTitle("Restaurants")

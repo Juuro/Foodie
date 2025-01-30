@@ -70,6 +70,19 @@ struct AddRestaurantView: View {
                     }
                 }
             }
+            .onAppear {
+                locationManager.requestLocationPermission()
+            }
+            .onChange(of: locationManager.authorizationStatus) { oldValue, newValue in
+                if newValue == .authorizedWhenInUse || newValue == .authorizedAlways {
+                    // If user has entered search text, refresh results with location
+                    if !searchText.isEmpty {
+                        Task {
+                            await searchRestaurants()
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -205,38 +218,9 @@ class LocationManagerDelegate: NSObject, ObservableObject, CLLocationManagerDele
     }
     
     func requestLocationPermission() {
-        // Check current status first
-        switch authorizationStatus {
-        case .notDetermined:
-            // Request authorization through delegate
+        // Only request if not determined
+        if manager.authorizationStatus == .notDetermined {
             manager.requestWhenInUseAuthorization()
-        case .authorizedWhenInUse, .authorizedAlways:
-            // Already authorized, start updates
-            manager.startUpdatingLocation()
-        case .denied, .restricted:
-            // Handle denied state
-            location = nil
-        @unknown default:
-            break
-        }
-    }
-    
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        DispatchQueue.main.async {
-            self.authorizationStatus = manager.authorizationStatus
-            
-            switch manager.authorizationStatus {
-            case .authorizedWhenInUse, .authorizedAlways:
-                // Location services are available
-                self.manager.startUpdatingLocation()
-            case .denied, .restricted:
-                // Location services currently unavailable
-                self.location = nil
-            case .notDetermined:
-                break // Wait for user response
-            @unknown default:
-                break
-            }
         }
     }
     
