@@ -15,7 +15,15 @@ struct ContentView: View {
     }
 }
 
-#Preview {
+#Preview("English") {
     ContentView()
         .modelContainer(for: Restaurant.self)
+        .environment(\.locale, Locale(identifier: "en"))
+}
+
+
+#Preview("German") {
+    ContentView()
+        .modelContainer(for: Restaurant.self)
+        .environment(\.locale, Locale(identifier: "de"))
 }
