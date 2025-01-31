@@ -144,7 +144,7 @@ private struct RestaurantList: View {
         }
         .scrollContentBackground(.hidden)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
+            ToolbarItem(placement: .topBarTrailing) {
                 SortButton(showingSortOptions: $showingSortOptions, sortOption: $sortOption)
             }
             

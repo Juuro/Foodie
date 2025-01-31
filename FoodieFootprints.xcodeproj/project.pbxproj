@@ -245,6 +245,7 @@
 				pl,
 				no,
 				nb,
+				ar,
 			);
 			mainGroup = B3B2B59F2CF3BA8D00C93E0E;
 			minimizedProjectReferenceProxies = 1;

@@ -70,7 +70,7 @@ struct StatisticsView: View {
                                 StatCard(
                                     title: String(localized: "Most Visited"),
                                     value: mostVisited.restaurant.name,
-                                    detail: "\(mostVisited.count) visits"
+                                    detail: "\(mostVisited.count) \(String(localized: "visits"))"
                                 )
                             }
                         }
@@ -85,7 +85,7 @@ struct StatisticsView: View {
                                 HStack {
                                     Text(item.restaurant.name)
                                     Spacer()
-                                    Text("\(item.count) visits")
+                                    Text("\(item.count) \(String(localized: "visits"))")
                                         .foregroundStyle(.secondary)
                                 }
                             }
@@ -114,7 +114,7 @@ struct StatisticsView: View {
                             HStack {
                                 Text(item.city)
                                 Spacer()
-                                Text("\(item.count) visits")
+                                Text("\(item.count) \(String(localized: "visits"))")
                                     .foregroundStyle(.secondary)
                             }
                         }
@@ -162,15 +162,15 @@ struct StatisticsView: View {
                     // Photos Statistics
                     Section("Photos") {
                         let totalPhotos = filteredVisits.reduce(0) { $0 + $1.photos.count }
-                        StatCard(title: "Total Photos", value: "\(totalPhotos)")
+                        StatCard(title: String(localized: "Total Photos"), value: "\(totalPhotos)")
                         if let mostPhotographed = mostPhotographedRestaurant {
                             NavigationLink {
                                 RestaurantDetailView(restaurant: mostPhotographed.restaurant)
                             } label: {
                                 StatCard(
-                                    title: "Most Photographed",
+                                    title: String(localized: "Most Photographed"),
                                     value: mostPhotographed.restaurant.name,
-                                    detail: "\(mostPhotographed.count) photos"
+                                    detail: "\(mostPhotographed.count) \(String(localized: "photos"))"
                                 )
                             }
                         }
