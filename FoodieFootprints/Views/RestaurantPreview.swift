@@ -2,13 +2,21 @@ import SwiftUI
 
 struct RestaurantPreview: View {
     let restaurant: Restaurant
+    let onDelete: (() -> Void)?
+    
+    init(restaurant: Restaurant, onDelete: (() -> Void)? = nil) {
+        self.restaurant = restaurant
+        self.onDelete = onDelete
+    }
     
     var body: some View {
-        NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
+        
+        HStack {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text(restaurant.name)
                         .font(.headline)
+                        .foregroundColor(.primary)
                     Spacer()
                     RatingView(rating: restaurant.averageRating)
                 }
@@ -16,6 +24,7 @@ struct RestaurantPreview: View {
                 Text(restaurant.formattedAddress)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                    .foregroundColor(.primary)
                     .lineSpacing(4)
                     .multilineTextAlignment(.leading)
                 
@@ -49,20 +58,40 @@ struct RestaurantPreview: View {
                 }
                 
                 HStack {
-                    Image(systemName: "clock")
-                        .foregroundStyle(.secondary)
-                    Text("\(restaurant.visits.count) visits")
-                        .foregroundStyle(.secondary)
-                        .font(.caption)
+                    if !restaurant.visits.isEmpty {
+                        Image(systemName: "clock")
+                            .foregroundStyle(.secondary)
+                            .foregroundColor(.primary)
+                        Text("\(restaurant.visits.count) \(String(localized: "visits"))")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .foregroundColor(.primary)
+                    }
                 }
             }
-            .padding()
-            .background {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.background)
-                    .shadow(radius: 5)
-            }
+            
+            Image(systemName: "chevron.right")
+                .foregroundColor(.secondary)
+                .font(.system(size: 14))
+            
         }
         .buttonStyle(.plain)
+        .modifier(SwipeActionsModifier(onDelete: onDelete))
+    }
+}
+
+private struct SwipeActionsModifier: ViewModifier {
+    let onDelete: (() -> Void)?
+    
+    func body(content: Content) -> some View {
+        if let onDelete = onDelete {
+            content.swipeActions(edge: .trailing) {
+                Button(role: .destructive, action: onDelete) {
+                    Label(String(localized: "Delete"), systemImage: "trash")
+                }
+            }
+        } else {
+            content
+        }
     }
 } 

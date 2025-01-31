@@ -3,133 +3,184 @@ import SwiftData
 
 struct RestaurantListView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var restaurants: [Restaurant]
+    @Query(sort: \Restaurant.name) private var restaurants: [Restaurant]
     @State private var searchText = ""
+    @State private var showingSortOptions = false
+    @State private var sortOption: SortOption = .name
     @State private var showingAddRestaurant = false
-    @State private var sortOption: SortOption = .lastVisit
     
     enum SortOption {
-        case name
-        case rating
-        case lastVisit
-        case lastAdded
+        case name, rating, lastVisit, lastAdded
         
-        var label: String {
+        var title: String {
             switch self {
-            case .name: "Name"
-            case .rating: "Rating"
-            case .lastVisit: "Last Visit"
-            case .lastAdded: "Last Added"
+            case .name: String(localized: "Name")
+            case .rating: String(localized: "Rating")
+            case .lastVisit: String(localized: "Last Visit")
+            case .lastAdded: String(localized: "Last Added")
             }
         }
     }
     
-    var filteredAndSortedRestaurants: [Restaurant] {
-        let filtered = searchText.isEmpty ? restaurants : restaurants.filter {
+    private var filteredRestaurants: [Restaurant] {
+        if searchText.isEmpty {
+            return sortedRestaurants
+        }
+        return sortedRestaurants.filter {
             $0.name.localizedCaseInsensitiveContains(searchText)
         }
-        
-        return filtered.sorted { first, second in
+    }
+    
+    private var sortedRestaurants: [Restaurant] {
+        restaurants.sorted { first, second in
             switch sortOption {
             case .name:
-                return first.name.localizedCompare(second.name) == .orderedAscending
+                return first.name < second.name
             case .rating:
                 return first.averageRating > second.averageRating
             case .lastVisit:
-                if first.visits.isEmpty && second.visits.isEmpty {
-                    return first.createdAt > second.createdAt
-                }
-                if first.visits.isEmpty {
-                    return false
-                }
-                if second.visits.isEmpty {
-                    return true
-                }
-                let firstDate = first.visits.max(by: { $0.date < $1.date })?.date ?? .distantPast
-                let secondDate = second.visits.max(by: { $0.date < $1.date })?.date ?? .distantPast
-                return firstDate > secondDate
+                return (first.visits.max(by: { $0.date < $1.date })?.date ?? .distantPast) >
+                       (second.visits.max(by: { $0.date < $1.date })?.date ?? .distantPast)
             case .lastAdded:
-                return first.createdAt > second.createdAt
+                return first.id > second.id
             }
         }
     }
     
     var body: some View {
         NavigationStack {
-            Group {
-                if restaurants.isEmpty {
-                    VStack(spacing: 20) {
-                        Image(systemName: "fork.knife.circle")
-                            .font(.system(size: 60))
-                            .foregroundStyle(.gray)
-                        
-                        Text("No Restaurants Yet")
-                            .font(.title2)
-                            .foregroundStyle(.gray)
-                        
-                        Button {
-                            showingAddRestaurant = true
-                        } label: {
-                            Label("Add Your First Restaurant", systemImage: "plus.circle.fill")
-                                .font(.headline)
-                        }
-                        .buttonStyle(.borderedProminent)
-                    }
-                    .padding()
-                } else {
-                    List {
-                        ForEach(filteredAndSortedRestaurants) { restaurant in
-                            NavigationLink {
-                                RestaurantDetailView(restaurant: restaurant)
-                            } label: {
-                                RestaurantRowView(restaurant: restaurant)
-                            }
-                        }
-                        .onDelete(perform: deleteRestaurants)
-                    }
-                    .searchable(text: $searchText, prompt: "Search your restaurants")
-                }
-            }
-            .navigationTitle("Restaurants")
-            .toolbar {
-                if !restaurants.isEmpty {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Menu {
-                            Picker("Sort By", selection: $sortOption) {
-                                Label("Name", systemImage: "textformat")
-                                    .tag(SortOption.name)
-                                Label("Rating", systemImage: "star")
-                                    .tag(SortOption.rating)
-                                Label("Last Visit", systemImage: "clock")
-                                    .tag(SortOption.lastVisit)
-                                Label("Last Added", systemImage: "calendar")
-                                    .tag(SortOption.lastAdded)
-                            }
-                        } label: {
-                            Label("Sort", systemImage: "arrow.up.arrow.down")
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        EditButton()
-                    }
-                    
-                    ToolbarItem {
-                        Button(action: { showingAddRestaurant = true }) {
-                            Label("Add Restaurant", systemImage: "plus")
-                        }
-                    }
-                }
-            }
+            RestaurantListContent(
+                restaurants: filteredRestaurants,
+                showingAddRestaurant: $showingAddRestaurant,
+                showingSortOptions: $showingSortOptions,
+                sortOption: $sortOption,
+                onDelete: deleteRestaurant
+            )
+            .searchable(text: $searchText, prompt: String(localized: "Search your restaurants"))
+            .navigationTitle(String(localized: "Restaurants"))
             .sheet(isPresented: $showingAddRestaurant) {
                 AddRestaurantView()
             }
         }
     }
     
-    private func deleteRestaurants(offsets: IndexSet) {
-        for index in offsets {
-            modelContext.delete(filteredAndSortedRestaurants[index])
+    private func deleteRestaurant(_ restaurant: Restaurant) {
+        modelContext.delete(restaurant)
+    }
+}
+
+private struct RestaurantListContent: View {
+    let restaurants: [Restaurant]
+    @Binding var showingAddRestaurant: Bool
+    @Binding var showingSortOptions: Bool
+    @Binding var sortOption: RestaurantListView.SortOption
+    let onDelete: (Restaurant) -> Void
+    
+    var body: some View {
+        Group {
+            if restaurants.isEmpty {
+                EmptyStateView(showingAddRestaurant: $showingAddRestaurant)
+            } else {
+                RestaurantList(
+                    restaurants: restaurants,
+                    showingAddRestaurant: $showingAddRestaurant,
+                    showingSortOptions: $showingSortOptions,
+                    sortOption: $sortOption,
+                    onDelete: onDelete
+                )
+            }
+        }
+        .background(Color(white: 0.95)) // Slightly darker off-white background
+    }
+}
+
+private struct EmptyStateView: View {
+    @Binding var showingAddRestaurant: Bool
+    
+    var body: some View {
+        ContentUnavailableView {
+            Label(String(localized: "No Restaurants Yet"), systemImage: "fork.knife")
+        } description: {
+            Text(String(localized: "Add Your First Restaurant"))
+        } actions: {
+            Button(action: { showingAddRestaurant = true }) {
+                Label(String(localized: "Add Restaurant"), systemImage: "plus")
+            }
+            .buttonStyle(.borderedProminent)
+        }
+    }
+}
+
+private struct RestaurantList: View {
+    let restaurants: [Restaurant]
+    @Binding var showingAddRestaurant: Bool
+    @Binding var showingSortOptions: Bool
+    @Binding var sortOption: RestaurantListView.SortOption
+    let onDelete: (Restaurant) -> Void
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                ForEach(restaurants) { restaurant in
+                    NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
+                        RestaurantPreview(restaurant: restaurant) {
+                            onDelete(restaurant)
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical)
+                    }
+                    
+                    if restaurant != restaurants.last {
+                        Divider()
+                            .padding(.horizontal)
+                    }
+                }
+            }
+            .background {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.white)
+            }
+            .padding(.horizontal)
+        }
+        .scrollContentBackground(.hidden)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                SortButton(showingSortOptions: $showingSortOptions, sortOption: $sortOption)
+            }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                AddButton(showingAddRestaurant: $showingAddRestaurant)
+            }
+        }
+    }
+}
+
+private struct SortButton: View {
+    @Binding var showingSortOptions: Bool
+    @Binding var sortOption: RestaurantListView.SortOption
+    
+    var body: some View {
+        Menu {
+            Picker(String(localized: "Sort By"), selection: $sortOption) {
+                Text(RestaurantListView.SortOption.name.title).tag(RestaurantListView.SortOption.name)
+                Text(RestaurantListView.SortOption.rating.title).tag(RestaurantListView.SortOption.rating)
+                Text(RestaurantListView.SortOption.lastVisit.title).tag(RestaurantListView.SortOption.lastVisit)
+                Text(RestaurantListView.SortOption.lastAdded.title).tag(RestaurantListView.SortOption.lastAdded)
+            }
+        } label: {
+            Label(String(localized: "Sort"), systemImage: "arrow.up.arrow.down")
+        }
+    }
+}
+
+private struct AddButton: View {
+    @Binding var showingAddRestaurant: Bool
+    
+    var body: some View {
+        Button {
+            showingAddRestaurant = true
+        } label: {
+            Label(String(localized: "Add Restaurant"), systemImage: "plus")
         }
     }
 }

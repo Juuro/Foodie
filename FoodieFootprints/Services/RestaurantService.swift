@@ -11,9 +11,9 @@ class RestaurantService {
         var errorDescription: String? {
             switch self {
             case .noResults:
-                return "No restaurants found matching your search"
+                return String(localized: "No restaurants found matching your search")
             case .searchError(let error):
-                return "Search failed: \(error.localizedDescription)"
+                return String(format: String(localized: "Search failed: %@"), error.localizedDescription)
             }
         }
     }
@@ -111,6 +111,6 @@ class RestaurantService {
             components.append(locationPart)
         }
         
-        return components.isEmpty ? "Address not available" : components.joined(separator: "\n")
+        return components.isEmpty ? String(localized: "Address not available") : components.joined(separator: "\n")
     }
 } 

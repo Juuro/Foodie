@@ -228,6 +228,24 @@
 			knownRegions = (
 				en,
 				Base,
+				de,
+				fr,
+				it,
+				ja,
+				hi,
+				nl,
+				da,
+				pt,
+				es,
+				is,
+				sv,
+				fi,
+				ru,
+				uk,
+				pl,
+				no,
+				nb,
+				ar,
 			);
 			mainGroup = B3B2B59F2CF3BA8D00C93E0E;
 			minimizedProjectReferenceProxies = 1;
@@ -364,6 +382,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -420,6 +439,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -431,7 +451,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"FoodieFootprints/Preview Content\"";
 				DEVELOPMENT_TEAM = A8L9TRSZCR;
 				ENABLE_PREVIEWS = YES;
@@ -473,7 +493,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"FoodieFootprints/Preview Content\"";
 				DEVELOPMENT_TEAM = A8L9TRSZCR;
 				ENABLE_PREVIEWS = YES;

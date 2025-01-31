@@ -46,7 +46,7 @@ struct RestaurantDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Image(systemName: "clock.fill")
-                        Text("\(restaurant.visits.count) visits")
+                        Text("\(restaurant.visits.count) \(String(localized: "visits"))")
                     }
                     
                     HStack(alignment: .top) {
@@ -61,7 +61,7 @@ struct RestaurantDetailView: View {
                         Link(destination: url) {
                             HStack {
                                 Image(systemName: "globe")
-                                Text("Visit Website")
+                                Text(String(localized: "Visit Website"))
                             }
                         }
                     }
@@ -70,7 +70,7 @@ struct RestaurantDetailView: View {
                         Link(destination: url) {
                             HStack {
                                 Image(systemName: "link")
-                                Text("View on HappyCow")
+                                Text(String(localized: "View on HappyCow"))
                             }
                         }
                     }
@@ -87,13 +87,13 @@ struct RestaurantDetailView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button(action: { showingAddVisit = true }) {
-                        Label("Add Review", systemImage: "plus")
+                        Label(String(localized: "Add Review"), systemImage: "plus")
                     }
                     
                     Button(role: .destructive) {
                         showingDeleteConfirmation = true
                     } label: {
-                        Label("Delete Restaurant", systemImage: "trash")
+                        Label(String(localized: "Delete Restaurant"), systemImage: "trash")
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
@@ -103,16 +103,16 @@ struct RestaurantDetailView: View {
         .sheet(isPresented: $showingAddVisit) {
             AddVisitView(restaurant: restaurant)
         }
-        .alert("Delete Restaurant", isPresented: $showingDeleteConfirmation) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
+        .alert(String(localized: "Delete Restaurant"), isPresented: $showingDeleteConfirmation) {
+            Button(String(localized: "Cancel"), role: .cancel) { }
+            Button(String(localized: "Delete"), role: .destructive) {
                 deleteRestaurant()
             }
         } message: {
             if restaurant.visits.isEmpty {
                 Text("Are you sure you want to delete this restaurant?")
             } else {
-                Text("Are you sure you want to delete this restaurant? This will also delete all \(restaurant.visits.count) reviews. This action cannot be undone.")
+                Text(String(format: String(localized: "Are you sure you want to delete this restaurant? This will also delete all %lld reviews. This action cannot be undone."), restaurant.visits.count))
             }
         }
     }
@@ -125,49 +125,6 @@ struct RestaurantDetailView: View {
         // Then delete the restaurant
         modelContext.delete(restaurant)
         dismiss()
-    }
-}
-
-private struct PhotosGridView: View {
-    let photos: [Visit.Photo]
-    @State private var selectedPhotoIndex: Int?
-    
-    // Get all photos sorted by date (newest first)
-    var sortedPhotos: [Visit.Photo] {
-        // Since we're getting photos from visits, they're already in order
-        // as they're passed from the parent view
-        photos
-    }
-    
-    var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                ForEach(Array(sortedPhotos.enumerated()), id: \.element.id) { index, photo in
-                    if let image = photo.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 280, height: 200)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .onTapGesture {
-                                selectedPhotoIndex = index
-                            }
-                    }
-                }
-            }
-            .padding(.horizontal)
-        }
-        .fullScreenCover(item: Binding(
-            get: { selectedPhotoIndex.map { PhotoIdentifier(index: $0) } },
-            set: { selectedPhotoIndex = $0?.index }
-        )) { identifier in
-            PhotoViewer(photos: sortedPhotos, initialIndex: identifier.index, isPresented: $selectedPhotoIndex)
-        }
-    }
-    
-    private struct PhotoIdentifier: Identifiable {
-        let index: Int
-        var id: Int { index }
     }
 }
 
@@ -357,14 +314,14 @@ private struct ReviewsSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text("Reviews")
+                Text(String(localized: "Reviews"))
                     .font(.title2)
                     .bold()
                 Spacer()
                 Button {
                     showingAddVisit = true
                 } label: {
-                    Label("Add Review", systemImage: "plus.circle.fill")
+                    Label(String(localized: "Add Review"), systemImage: "plus.circle.fill")
                         .foregroundStyle(.pink)
                 }
             }

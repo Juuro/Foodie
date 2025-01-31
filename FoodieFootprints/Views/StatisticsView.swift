@@ -58,17 +58,19 @@ struct StatisticsView: View {
                 List {
                     // General Statistics
                     Section("Overview") {
-                        StatCard(title: "Total Restaurants", value: "\(restaurants.count)")
-                        StatCard(title: "Total Visits", value: "\(filteredVisits.count)")
-                        StatCard(title: "Average Rating", value: String(format: "%.1f", averageRating))
+                        StatCard(title: String(localized: "Total Restaurants"), value: "\(restaurants.count)")
+                        StatCard(title: String(localized: "Total Visits"), value: "\(filteredVisits.count)")
+                        if let averageRating = calculateAverageRating() {
+                            StatCard(title: String(localized: "Average Rating"), value: String(format: "%.1f", averageRating))
+                        }
                         if let mostVisited = mostVisitedRestaurant {
                             NavigationLink {
                                 RestaurantDetailView(restaurant: mostVisited.restaurant)
                             } label: {
                                 StatCard(
-                                    title: "Most Visited",
+                                    title: String(localized: "Most Visited"),
                                     value: mostVisited.restaurant.name,
-                                    detail: "\(mostVisited.count) visits"
+                                    detail: "\(mostVisited.count) \(String(localized: "visits"))"
                                 )
                             }
                         }
@@ -83,7 +85,7 @@ struct StatisticsView: View {
                                 HStack {
                                     Text(item.restaurant.name)
                                     Spacer()
-                                    Text("\(item.count) visits")
+                                    Text("\(item.count) \(String(localized: "visits"))")
                                         .foregroundStyle(.secondary)
                                 }
                             }
@@ -112,7 +114,7 @@ struct StatisticsView: View {
                             HStack {
                                 Text(item.city)
                                 Spacer()
-                                Text("\(item.count) visits")
+                                Text("\(item.count) \(String(localized: "visits"))")
                                     .foregroundStyle(.secondary)
                             }
                         }
@@ -160,29 +162,29 @@ struct StatisticsView: View {
                     // Photos Statistics
                     Section("Photos") {
                         let totalPhotos = filteredVisits.reduce(0) { $0 + $1.photos.count }
-                        StatCard(title: "Total Photos", value: "\(totalPhotos)")
+                        StatCard(title: String(localized: "Total Photos"), value: "\(totalPhotos)")
                         if let mostPhotographed = mostPhotographedRestaurant {
                             NavigationLink {
                                 RestaurantDetailView(restaurant: mostPhotographed.restaurant)
                             } label: {
                                 StatCard(
-                                    title: "Most Photographed",
+                                    title: String(localized: "Most Photographed"),
                                     value: mostPhotographed.restaurant.name,
-                                    detail: "\(mostPhotographed.count) photos"
+                                    detail: "\(mostPhotographed.count) \(String(localized: "photos"))"
                                 )
                             }
                         }
                     }
                 }
             }
-            .navigationTitle("Statistics")
+            .navigationTitle(String(localized: "Statistics"))
         }
     }
     
-    private var averageRating: Double {
-        guard !filteredVisits.isEmpty else { return 0 }
-        let sum = filteredVisits.reduce(0.0) { $0 + $1.rating }
-        return sum / Double(filteredVisits.count)
+    private func calculateAverageRating() -> Double? {
+        let restaurantsWithRatings = restaurants.filter { $0.averageRating > 0 }
+        guard !restaurantsWithRatings.isEmpty else { return nil }
+        return restaurantsWithRatings.reduce(0.0) { $0 + $1.averageRating } / Double(restaurantsWithRatings.count)
     }
     
     private var topVisitedRestaurants: [(restaurant: Restaurant, count: Int)] {
