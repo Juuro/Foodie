@@ -308,6 +308,11 @@ private struct ExistingRestaurantRow: View {
             case .brewery: return "mug.fill"
             case .winery: return "wineglass.fill"
             case .foodMarket: return "basket.fill"
+            case .store: return "basket.fill"
+            case .distillery: return "wineglass.fill"
+            case .hotel: return "bed.double.fill"
+            case .nightlife: return "figure.dance"
+            case .foodMarket: return "storefront.fill"
             default: return "fork.knife"
             }
         }
@@ -367,6 +372,11 @@ private struct NewRestaurantRow: View {
             case .brewery: return "mug.fill"
             case .winery: return "wineglass.fill"
             case .foodMarket: return "basket.fill"
+            case .store: return "basket.fill"
+            case .distillery: return "wineglass.fill"
+            case .hotel: return "bed.double.fill"
+            case .nightlife: return "figure.dance"
+            case .foodMarket: return "storefront.fill"
             default: return "fork.knife"
             }
         }

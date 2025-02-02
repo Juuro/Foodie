@@ -29,6 +29,11 @@ class RestaurantService {
             .bakery,
             .brewery,
             .winery,
+            .foodMarket,
+            .store,
+            .distillery,
+            .hotel,
+            .nightlife,
             .foodMarket
         ])
         
@@ -80,11 +85,16 @@ class RestaurantService {
     
     private func isGastronomicPlace(_ category: MKPointOfInterestCategory) -> Bool {
         return category == .restaurant ||
-               category == .cafe ||
-               category == .bakery ||
-               category == .brewery ||
-               category == .winery ||
-               category == .foodMarket
+        category == .cafe ||
+        category == .bakery ||
+        category == .brewery ||
+        category == .winery ||
+        category == .foodMarket ||
+        category == .store ||
+        category == .distillery ||
+        category == .hotel ||
+        category == .nightlife ||
+        category == .foodMarket
     }
     
     private func formatAddress(from placemark: MKPlacemark) -> String {
