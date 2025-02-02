@@ -81,13 +81,13 @@ struct EditVisitView: View {
                     } label: {
                         HStack {
                             Spacer()
-                            Text(String(localized: "Delete Review"))
+                            Text(String(localized: "Delete Visit"))
                             Spacer()
                         }
                     }
                 }
             }
-            .navigationTitle(String(localized: "Edit Review"))
+            .navigationTitle(String(localized: "Edit Visit"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -114,7 +114,7 @@ struct EditVisitView: View {
                         .background(.ultraThinMaterial)
                 }
             }
-            .alert(String(localized: "Delete Review"), isPresented: $showingDeleteConfirmation) {
+            .alert(String(localized: "Delete Visit"), isPresented: $showingDeleteConfirmation) {
                 Button(String(localized: "Cancel"), role: .cancel) { }
                 Button(String(localized: "Delete"), role: .destructive) {
                     deleteVisit()

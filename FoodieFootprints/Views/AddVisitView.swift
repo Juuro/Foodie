@@ -56,7 +56,7 @@ struct AddVisitView: View {
                     }
                 }
             }
-            .navigationTitle(String(localized: "Add Review"))
+            .navigationTitle(String(localized: "Add Visit"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

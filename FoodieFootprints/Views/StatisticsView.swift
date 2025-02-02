@@ -168,7 +168,7 @@ struct StatisticsView: View {
                                 RestaurantDetailView(restaurant: mostPhotographed.restaurant)
                             } label: {
                                 StatCard(
-                                    title: String(localized: "Most Photographed"),
+                                    title: String(localized: "Most Photos"),
                                     value: mostPhotographed.restaurant.name,
                                     detail: "\(mostPhotographed.count) \(String(localized: "photos"))"
                                 )
