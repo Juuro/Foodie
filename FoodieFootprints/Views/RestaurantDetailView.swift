@@ -87,7 +87,7 @@ struct RestaurantDetailView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button(action: { showingAddVisit = true }) {
-                        Label(String(localized: "Add Review"), systemImage: "plus")
+                        Label(String(localized: "Add Visit"), systemImage: "plus")
                     }
                     
                     Button(role: .destructive) {
@@ -321,7 +321,7 @@ private struct ReviewsSection: View {
                 Button {
                     showingAddVisit = true
                 } label: {
-                    Label(String(localized: "Add Review"), systemImage: "plus.circle.fill")
+                    Label(String(localized: "Add Visit"), systemImage: "plus.circle.fill")
                         .foregroundStyle(.pink)
                 }
             }

@@ -188,102 +188,24 @@
         }
       }
     },
-    "Add Review" : {
+    "Add Visit" : {
       "localizations" : {
-        "da" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tilføj anmeldelse"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bewertung hinzufügen"
+            "value" : "Besuch hinzufügen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir reseña"
-          }
-        },
-        "fi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lisää arvostelu"
+            "value" : "Añadir visitas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajouter un avis"
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "समीक्षा जोड़ें"
-          }
-        },
-        "is" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bæta við umsögn"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aggiungi recensione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レビューを追加"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Legg til anmeldelse"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beoordeling toevoegen"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dodaj recenzję"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicionar avaliação"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Добавить отзыв"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lägg till recension"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Додати відгук"
+            "value" : "Ajouter une visite"
           }
         }
       }
@@ -1289,64 +1211,6 @@
         }
       }
     },
-    "Delete Review" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bewertung löschen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar reseña"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Supprimer l'avis"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elimina recensione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レビューを削除"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Slett anmeldelse"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usuń recenzję"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Удалить отзыв"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Видалити відгук"
-          }
-        }
-      }
-    },
     "Delete Visit" : {
       "localizations" : {
         "de" : {
@@ -1449,60 +1313,24 @@
         }
       }
     },
-    "Edit Review" : {
+    "Edit Visit" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bewertung bearbeiten"
+            "value" : "Besuch bearbeiten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Editar reseña"
+            "value" : "Editar visitas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modifier l'avis"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Modifica recensione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レビューを編集"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rediger anmeldelse"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Edytuj recenzję"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Редактировать отзыв"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Редагувати відгук"
+            "value" : "Modifier visite"
           }
         }
       }
@@ -1854,24 +1682,24 @@
         }
       }
     },
-    "Most Photographed" : {
+    "Most Photos" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Am häufigsten fotografiert"
+            "value" : "Die meisten Fotos"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más fotografiado"
+            "value" : "Más fotos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le plus photographié"
+            "value" : "Les plus photos"
           }
         }
       }
