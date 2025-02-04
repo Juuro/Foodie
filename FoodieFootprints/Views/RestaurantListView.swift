@@ -10,7 +10,7 @@ struct RestaurantListView: View {
     @State private var showingAddRestaurant = false
     
     enum SortOption {
-        case name, rating, lastVisit, lastAdded
+        case name, rating, lastVisit, lastAdded, mostVisited
         
         var title: String {
             switch self {
@@ -18,6 +18,7 @@ struct RestaurantListView: View {
             case .rating: String(localized: "Rating")
             case .lastVisit: String(localized: "Last Visit")
             case .lastAdded: String(localized: "Last Added")
+            case .mostVisited: String(localized: "Most Visited")
             }
         }
     }
@@ -43,6 +44,8 @@ struct RestaurantListView: View {
                        (second.visits.max(by: { $0.date < $1.date })?.date ?? .distantPast)
             case .lastAdded:
                 return first.id > second.id
+            case .mostVisited:
+                return first.visits.count > second.visits.count
             }
         }
     }
@@ -144,7 +147,7 @@ private struct RestaurantList: View {
         }
         .scrollContentBackground(.hidden)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .topBarLeading) {
                 SortButton(showingSortOptions: $showingSortOptions, sortOption: $sortOption)
             }
             
@@ -166,6 +169,7 @@ private struct SortButton: View {
                 Text(RestaurantListView.SortOption.rating.title).tag(RestaurantListView.SortOption.rating)
                 Text(RestaurantListView.SortOption.lastVisit.title).tag(RestaurantListView.SortOption.lastVisit)
                 Text(RestaurantListView.SortOption.lastAdded.title).tag(RestaurantListView.SortOption.lastAdded)
+                Text(RestaurantListView.SortOption.mostVisited.title).tag(RestaurantListView.SortOption.mostVisited)
             }
         } label: {
             Label(String(localized: "Sort"), systemImage: "arrow.up.arrow.down")
