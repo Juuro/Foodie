@@ -4,6 +4,23 @@ import CoreLocation
 import MapKit
 
 @Model
+final class MenuFile {
+    var id: UUID
+    var name: String
+    var data: Data
+    var type: String // "image" or "pdf"
+    var dateAdded: Date
+    
+    init(id: UUID = UUID(), name: String, data: Data, type: String, dateAdded: Date = Date()) {
+        self.id = id
+        self.name = name
+        self.data = data
+        self.type = type
+        self.dateAdded = dateAdded
+    }
+}
+
+@Model
 final class Restaurant: Identifiable {
     var id: String
     var name: String
@@ -13,8 +30,14 @@ final class Restaurant: Identifiable {
     var visits: [Visit]
     var website: String?
     var createdAt: Date
+    @Relationship(deleteRule: .cascade) var menuFiles: [MenuFile]
     
-    init(id: String, name: String, address: String, latitude: Double, longitude: Double, website: String? = nil) {
+    init(id: String = UUID().uuidString,
+         name: String,
+         address: String,
+         latitude: Double,
+         longitude: Double,
+         website: String? = nil) {
         self.id = id
         self.name = name
         self.address = address
@@ -23,6 +46,7 @@ final class Restaurant: Identifiable {
         self.website = website
         self.visits = []
         self.createdAt = Date()
+        self.menuFiles = []
     }
     
     init(from previous: Restaurant) {
@@ -34,6 +58,7 @@ final class Restaurant: Identifiable {
         self.website = previous.website
         self.visits = previous.visits
         self.createdAt = Date.distantPast
+        self.menuFiles = previous.menuFiles
     }
     
     var coordinate: CLLocationCoordinate2D {

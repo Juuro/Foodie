@@ -1,13 +1,28 @@
 import SwiftUI
 import MapKit
 import SwiftData
+import PhotosUI
 
 struct RestaurantDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @State private var showingAddVisit = false
     @State private var showingDeleteConfirmation = false
+    @State private var showingPhotoPicker = false
+    @State private var selectedItems: [PhotosPickerItem] = []
+    @State private var selectedMenuFile: MenuFile?
+    @State private var showingFullScreen = false
+    @State private var isEditingMenu = false
+    @State private var menuFileToDelete: MenuFile?
+    @State private var showingMenuDeleteConfirmation = false
     let restaurant: Restaurant
+    
+    private let gridSpacing: CGFloat = 12
+    private let columns = [
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12)
+    ]
     
     var happyCowURL: URL? {
         var components = URLComponents(string: "https://www.happycow.net/searchmap")
@@ -77,6 +92,17 @@ struct RestaurantDetailView: View {
                 }
                 .padding(.horizontal)
                 
+                // Menu photos section
+                MenuSection(
+                    restaurant: restaurant,
+                    isEditingMenu: $isEditingMenu,
+                    showingPhotoPicker: $showingPhotoPicker,
+                    selectedMenuFile: $selectedMenuFile,
+                    showingFullScreen: $showingFullScreen,
+                    menuFileToDelete: $menuFileToDelete,
+                    showingMenuDeleteConfirmation: $showingMenuDeleteConfirmation
+                )
+                
                 // Reviews section
                 ReviewsSection(restaurant: restaurant, visits: restaurant.visits.sorted { $0.date > $1.date })
             }
@@ -115,6 +141,37 @@ struct RestaurantDetailView: View {
                 Text(String(format: String(localized: "Are you sure you want to delete this restaurant? This will also delete all %lld reviews. This action cannot be undone."), restaurant.visits.count))
             }
         }
+        .photosPicker(isPresented: $showingPhotoPicker,
+                     selection: $selectedItems,
+                     matching: .images)
+        .onChange(of: selectedItems) { oldValue, newValue in
+            if !newValue.isEmpty {
+                Task {
+                    await loadMenuPhotos()
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $showingFullScreen) {
+            if let menuFile = selectedMenuFile {
+                MenuFileViewer(menuFile: menuFile) {
+                    if let index = restaurant.menuFiles.firstIndex(where: { $0.id == menuFile.id }) {
+                        restaurant.menuFiles.remove(at: index)
+                    }
+                }
+            }
+        }
+        .alert(String(localized: "Delete Menu Photo"), isPresented: $showingMenuDeleteConfirmation) {
+            Button(String(localized: "Cancel"), role: .cancel) { }
+            Button(String(localized: "Delete"), role: .destructive) {
+                if let menuFile = menuFileToDelete {
+                    if let index = restaurant.menuFiles.firstIndex(where: { $0.id == menuFile.id }) {
+                        restaurant.menuFiles.remove(at: index)
+                    }
+                }
+            }
+        } message: {
+            Text(String(localized: "Are you sure you want to delete this menu photo?"))
+        }
     }
     
     private func deleteRestaurant() {
@@ -125,6 +182,20 @@ struct RestaurantDetailView: View {
         // Then delete the restaurant
         modelContext.delete(restaurant)
         dismiss()
+    }
+    
+    private func loadMenuPhotos() async {
+        for item in selectedItems {
+            if let data = try? await item.loadTransferable(type: Data.self) {
+                let menuFile = MenuFile(
+                    name: "Menu Photo \(restaurant.menuFiles.count + 1)",
+                    data: data,
+                    type: "image"
+                )
+                restaurant.menuFiles.append(menuFile)
+            }
+        }
+        selectedItems = []
     }
 }
 
@@ -314,7 +385,7 @@ private struct ReviewsSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text(String(localized: "Reviews"))
+                Text(String(localized: "Visits"))
                     .font(.title2)
                     .bold()
                 Spacer()

@@ -30,6 +30,29 @@
     "+%lld" : {
 
     },
+    "Add Menu" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speisekarte hinzufügen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir menú"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter un menu"
+          }
+        }
+      }
+    },
     "Add More Photos" : {
       "localizations" : {
         "de" : {
@@ -84,6 +107,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Додати фотографії"
+          }
+        }
+      }
+    },
+    "Add photos of the menu" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speisekartenfotos hinzufügen"
           }
         }
       }
@@ -528,6 +561,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вже у вашому списку"
+          }
+        }
+      }
+    },
+    "Are you sure you want to delete this menu photo?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Möchtest du dieses Speisekartenfoto wirklich löschen?"
           }
         }
       }
@@ -1110,6 +1153,16 @@
         }
       }
     },
+    "Delete Menu Photo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speisekartenfoto löschen"
+          }
+        }
+      }
+    },
     "Delete Restaurant" : {
       "comment" : "RestaurantDetailView",
       "localizations" : {
@@ -1682,6 +1735,28 @@
         }
       }
     },
+    "Menu" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speisekarte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menú"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menu"
+          }
+        }
+      }
+    },
     "Most Photos" : {
       "localizations" : {
         "de" : {
@@ -1866,6 +1941,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Назва"
+          }
+        }
+      }
+    },
+    "No Menu" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Speisekarte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin menú"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas de menu"
           }
         }
       }
@@ -2441,6 +2538,7 @@
       }
     },
     "Reviews" : {
+      "extractionState" : "stale",
       "localizations" : {
         "da" : {
           "stringUnit" : {
@@ -3470,6 +3568,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Спробуйте інший пошуковий запит"
+          }
+        }
+      }
+    },
+    "View Menu" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speisekarte anzeigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver menú"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voir le menu"
           }
         }
       }
