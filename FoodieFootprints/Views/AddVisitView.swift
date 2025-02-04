@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import ContactsUI
 
 struct AddVisitView: View {
     @Environment(\.dismiss) private var dismiss
@@ -12,6 +13,7 @@ struct AddVisitView: View {
     @State private var photos: [Visit.Photo] = []
     @State private var isLoading = false
     @State private var companions = ""
+    @State private var showingContactPicker = false
     
     private var isValid: Bool {
         !review.isEmpty
@@ -38,6 +40,10 @@ struct AddVisitView: View {
                 Section(String(localized: "Companions")) {
                     TextEditor(text: $companions)
                         .frame(minHeight: 100)
+                    
+                    Button(action: { showingContactPicker = true }) {
+                        Label(String(localized: "Add from Contacts"), systemImage: "person.crop.circle.badge.plus")
+                    }
                 }
                 
                 Section(String(localized: "Photos")) {
@@ -88,6 +94,9 @@ struct AddVisitView: View {
                     ProgressView()
                         .background(.ultraThinMaterial)
                 }
+            }
+            .sheet(isPresented: $showingContactPicker) {
+                ContactPicker(selectedNames: $companions)
             }
         }
     }
