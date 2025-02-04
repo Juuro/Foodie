@@ -10,6 +10,7 @@ struct EditVisitView: View {
     @State private var rating: Double
     @State private var review: String
     @State private var date: Date
+    @State private var companions: String
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var photos: [Visit.Photo]
     @State private var isLoading = false
@@ -21,6 +22,7 @@ struct EditVisitView: View {
         _rating = State(initialValue: visit.rating)
         _review = State(initialValue: visit.review)
         _date = State(initialValue: visit.date)
+        _companions = State(initialValue: visit.companions ?? "")
         _photos = State(initialValue: visit.photos)
     }
     
@@ -39,6 +41,11 @@ struct EditVisitView: View {
                 
                 Section(String(localized: "Review")) {
                     TextEditor(text: $review)
+                        .frame(minHeight: 100)
+                }
+                
+                Section(String(localized: "Companions")) {
+                    TextEditor(text: $companions)
                         .frame(minHeight: 100)
                 }
                 
@@ -150,6 +157,7 @@ struct EditVisitView: View {
         visit.date = date
         visit.rating = rating
         visit.review = review
+        visit.companions = companions.isEmpty ? nil : companions
         visit.photos = photos
         dismiss()
     }

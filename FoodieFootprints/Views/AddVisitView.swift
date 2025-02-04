@@ -11,6 +11,7 @@ struct AddVisitView: View {
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var photos: [Visit.Photo] = []
     @State private var isLoading = false
+    @State private var companions = ""
     
     private var isValid: Bool {
         !review.isEmpty
@@ -31,6 +32,11 @@ struct AddVisitView: View {
                 
                 Section(String(localized: "Review")) {
                     TextEditor(text: $review)
+                        .frame(minHeight: 100)
+                }
+                
+                Section(String(localized: "Companions")) {
+                    TextEditor(text: $companions)
                         .frame(minHeight: 100)
                 }
                 
@@ -104,6 +110,7 @@ struct AddVisitView: View {
             date: date,
             rating: rating,
             review: review,
+            companions: companions,
             photos: photos
         )
         restaurant.visits.append(visit)

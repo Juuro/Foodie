@@ -429,6 +429,12 @@ private struct ReviewsSection: View {
                                 .font(.body)
                         }
                         
+                        if let companions = visit.companions, !companions.isEmpty {
+                            Text(companions)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        
                         if !visit.photos.isEmpty {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
