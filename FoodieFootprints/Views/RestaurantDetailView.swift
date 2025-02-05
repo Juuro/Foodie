@@ -15,6 +15,7 @@ struct RestaurantDetailView: View {
     @State private var isEditingMenu = false
     @State private var menuFileToDelete: MenuFile?
     @State private var showingMenuDeleteConfirmation = false
+    @State private var selectedPhotoIndex: Int?
     let restaurant: Restaurant
     
     private let gridSpacing: CGFloat = 12
@@ -48,7 +49,24 @@ struct RestaurantDetailView: View {
                 
                 // Recent photos
                 if !restaurant.allPhotos.isEmpty {
-                    PhotosGridView(photos: restaurant.allPhotos)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(Array(restaurant.allPhotos.enumerated()), id: \.element.id) { index, photo in
+                                if let image = photo.image {
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 100, height: 100)
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                        .onTapGesture {
+                                            selectedPhotoIndex = index
+                                        }
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding(.vertical, 8)
                 }
                 
                 // Map preview
@@ -172,6 +190,19 @@ struct RestaurantDetailView: View {
         } message: {
             Text(String(localized: "Are you sure you want to delete this menu photo?"))
         }
+        .fullScreenCover(item: Binding(
+            get: { selectedPhotoIndex.map { PhotoIdentifier(index: $0) } },
+            set: { selectedPhotoIndex = $0?.index }
+        )) { identifier in
+            PhotoViewer(
+                photos: restaurant.allPhotos,
+                initialIndex: identifier.index,
+                isPresented: Binding(
+                    get: { selectedPhotoIndex },
+                    set: { selectedPhotoIndex = $0 }
+                )
+            )
+        }
     }
     
     private func deleteRestaurant() {
@@ -196,5 +227,10 @@ struct RestaurantDetailView: View {
             }
         }
         selectedItems = []
+    }
+    
+    private struct PhotoIdentifier: Identifiable {
+        let index: Int
+        var id: Int { index }
     }
 }

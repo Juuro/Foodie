@@ -27,7 +27,6 @@
 
     },
     "Add Menu" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1946,6 +1945,7 @@
       }
     },
     "No Menu" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
