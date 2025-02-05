@@ -98,9 +98,18 @@ struct MenuSection: View {
                     .scaledToFill()
                     .frame(width: 100, height: 100)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay {
+                    .overlay(alignment: .topTrailing) {
                         if isEditingMenu {
-                            deleteButton(for: menuFile)
+                            Button {
+                                menuFileToDelete = menuFile
+                                showingMenuDeleteConfirmation = true
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(.white)
+                                    .background(Color.black.opacity(0.5))
+                                    .clipShape(Circle())
+                            }
+                            .padding(4)
                         }
                     }
                     .onTapGesture {
@@ -108,20 +117,6 @@ struct MenuSection: View {
                     }
             }
         }
-    }
-    
-    private func deleteButton(for menuFile: MenuFile) -> some View {
-        Button {
-            menuFileToDelete = menuFile
-            showingMenuDeleteConfirmation = true
-        } label: {
-            Image(systemName: "minus.circle.fill")
-                .font(.title2)
-                .foregroundStyle(.red)
-                .background(Color.white)
-                .clipShape(Circle())
-        }
-        .padding(4)
     }
     
     private var photoViewerBinding: Binding<PhotoIdentifier?> {
