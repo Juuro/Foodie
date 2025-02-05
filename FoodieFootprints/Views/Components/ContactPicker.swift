@@ -5,10 +5,21 @@ struct ContactPicker: UIViewControllerRepresentable {
     @Binding var selectedNames: String
     @Environment(\.dismiss) private var dismiss
     
+    private func formatContactName(_ contact: CNContact) -> String {
+        "\(contact.givenName) \(contact.familyName)".trimmingCharacters(in: .whitespaces)
+    }
+    
+    private func isContactAlreadyAdded(_ contact: CNContact) -> Bool {
+        let existingNames = selectedNames.components(separatedBy: ", ")
+        let newName = formatContactName(contact)
+        return existingNames.contains(newName)
+    }
+    
     func makeUIViewController(context: Context) -> CNContactPickerViewController {
         let picker = CNContactPickerViewController()
         picker.delegate = context.coordinator
-        picker.predicateForEnablingContact = NSPredicate(value: true)
+        picker.predicateForEnablingContact = NSPredicate(format: "NOT SELF IN %@", 
+            selectedNames.components(separatedBy: ", "))
         picker.predicateForSelectionOfContact = NSPredicate(value: true)
         return picker
     }
@@ -27,14 +38,18 @@ struct ContactPicker: UIViewControllerRepresentable {
         }
         
         func contactPicker(_ picker: CNContactPickerViewController, didSelect contacts: [CNContact]) {
-            let names = contacts.map { "\($0.givenName) \($0.familyName)".trimmingCharacters(in: .whitespaces) }
-            let newNames = names.joined(separator: ", ")
+            let newContacts = contacts.filter { !parent.isContactAlreadyAdded($0) }
             
-            // Append to existing companions if not empty
-            if !parent.selectedNames.isEmpty {
-                parent.selectedNames += ", \(newNames)"
-            } else {
-                parent.selectedNames = newNames
+            if !newContacts.isEmpty {
+                let names = newContacts.map { parent.formatContactName($0) }
+                let newNames = names.joined(separator: ", ")
+                
+                // Append to existing companions if not empty
+                if !parent.selectedNames.isEmpty {
+                    parent.selectedNames += ", \(newNames)"
+                } else {
+                    parent.selectedNames = newNames
+                }
             }
             
             // Only dismiss the contact picker itself
