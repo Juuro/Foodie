@@ -2,6 +2,7 @@ import SwiftUI
 import MapKit
 import SwiftData
 import PhotosUI
+import ContactsUI
 
 struct RestaurantDetailView: View {
     @Environment(\.modelContext) private var modelContext
@@ -363,6 +364,97 @@ extension CLLocationCoordinate2D {
     }
 }
 
+private extension String {
+    func findContact() async -> CNContact? {
+        return await Task.detached {
+            let store = CNContactStore()
+            let keysToFetch: [CNKeyDescriptor] = [
+                CNContactGivenNameKey as CNKeyDescriptor,
+                CNContactFamilyNameKey as CNKeyDescriptor,
+                CNContactViewController.descriptorForRequiredKeys() as CNKeyDescriptor
+            ]
+            let request = CNContactFetchRequest(keysToFetch: keysToFetch)
+            
+            var matchingContact: CNContact?
+            try? store.enumerateContacts(with: request) { contact, _ in
+                let fullName = "\(contact.givenName) \(contact.familyName)".trimmingCharacters(in: .whitespaces)
+                if self == fullName {
+                    matchingContact = contact
+                }
+            }
+            return matchingContact
+        }.value
+    }
+}
+
+private struct CompanionsView: View {
+    let companions: String
+    
+    var body: some View {
+        let names = companions.components(separatedBy: ", ")
+        HStack {
+            ForEach(Array(names.enumerated()), id: \.element) { index, name in
+                CompanionButton(name: name)
+                if index < names.count - 1 {
+                    Text(" · ")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+    }
+}
+
+private struct CompanionButton: View {
+    let name: String
+    @State private var contact: CNContact?
+    @State private var isContactLoaded = false
+    
+    var body: some View {
+        Group {
+            if isContactLoaded && contact != nil {
+                Button(action: {
+                    openContact(contact: contact!)
+                }) {
+                    Text(name)
+                        .font(.subheadline)
+                        .foregroundStyle(.blue)
+                }
+            } else {
+                Text(name)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .task {
+            contact = await name.findContact()
+            isContactLoaded = true
+        }
+    }
+    
+    private func openContact(contact: CNContact) {
+        let contactVC = CNContactViewController(for: contact)
+        contactVC.allowsEditing = false
+        contactVC.navigationItem.leftBarButtonItem = UIBarButtonItem(
+            systemItem: .close,
+            primaryAction: UIAction { _ in
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let window = windowScene.windows.first,
+                   let rootVC = window.rootViewController {
+                    rootVC.dismiss(animated: true)
+                }
+            }
+        )
+        
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let rootVC = window.rootViewController {
+            let navController = UINavigationController(rootViewController: contactVC)
+            rootVC.present(navController, animated: true)
+        }
+    }
+}
+
 private struct ReviewsSection: View {
     @Environment(\.modelContext) private var modelContext
     let restaurant: Restaurant
@@ -430,9 +522,7 @@ private struct ReviewsSection: View {
                         }
                         
                         if let companions = visit.companions, !companions.isEmpty {
-                            Text(companions)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                            CompanionsView(companions: companions)
                         }
                         
                         if !visit.photos.isEmpty {

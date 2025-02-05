@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    " · " : {
+
+    },
     "%lld" : {
 
     },
@@ -28,6 +31,9 @@
       }
     },
     "+%lld" : {
+
+    },
+    "Add from Contacts" : {
 
     },
     "Add Menu" : {
@@ -1072,6 +1078,9 @@
           }
         }
       }
+    },
+    "Companions" : {
+
     },
     "Date" : {
       "localizations" : {
