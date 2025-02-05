@@ -8,13 +8,15 @@ final class Visit: Identifiable {
     var date: Date
     var rating: Double
     var review: String
+    var companions: String?
     var photos: [Photo]
     
-    init(date: Date, rating: Double, review: String, photos: [Photo] = []) {
+    init(date: Date, rating: Double, review: String, companions: String? = nil, photos: [Photo] = []) {
         self.id = UUID().uuidString
         self.date = date
         self.rating = rating
         self.review = review
+        self.companions = companions
         self.photos = photos
     }
     

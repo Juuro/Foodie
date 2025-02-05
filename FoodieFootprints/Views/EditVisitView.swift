@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import ContactsUI
 
 struct EditVisitView: View {
     @Environment(\.dismiss) private var dismiss
@@ -10,10 +11,12 @@ struct EditVisitView: View {
     @State private var rating: Double
     @State private var review: String
     @State private var date: Date
+    @State private var companions: String
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var photos: [Visit.Photo]
     @State private var isLoading = false
     @State private var showingDeleteConfirmation = false
+    @State private var showingContactPicker = false
     
     init(visit: Visit, restaurant: Restaurant) {
         self.visit = visit
@@ -21,7 +24,12 @@ struct EditVisitView: View {
         _rating = State(initialValue: visit.rating)
         _review = State(initialValue: visit.review)
         _date = State(initialValue: visit.date)
+        _companions = State(initialValue: visit.companions ?? "")
         _photos = State(initialValue: visit.photos)
+    }
+    
+    private var isValid: Bool {
+        !review.isEmpty
     }
     
     var body: some View {
@@ -40,6 +48,15 @@ struct EditVisitView: View {
                 Section(String(localized: "Review")) {
                     TextEditor(text: $review)
                         .frame(minHeight: 100)
+                }
+                
+                Section(String(localized: "Companions")) {
+                    TextEditor(text: $companions)
+                        .frame(minHeight: 100)
+                    
+                    Button(action: { showingContactPicker = true }) {
+                        Label(String(localized: "Add from Contacts"), systemImage: "person.crop.circle.badge.plus")
+                    }
                 }
                 
                 Section(String(localized: "Photos")) {
@@ -122,11 +139,10 @@ struct EditVisitView: View {
             } message: {
                 Text(String(localized: "Are you sure you want to delete this review? This action cannot be undone."))
             }
+            .sheet(isPresented: $showingContactPicker) {
+                ContactPicker(selectedNames: $companions)
+            }
         }
-    }
-    
-    private var isValid: Bool {
-        !review.isEmpty
     }
     
     private func loadPhotos() async {
@@ -150,6 +166,7 @@ struct EditVisitView: View {
         visit.date = date
         visit.rating = rating
         visit.review = review
+        visit.companions = companions.isEmpty ? nil : companions
         visit.photos = photos
         dismiss()
     }

@@ -459,6 +459,7 @@
 				INFOPLIST_FILE = FoodieFootprints/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Foodie;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_NSContactsUsageDescription = "We need access to your contacts to add them as companions to your restaurant visits.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Show nearby restaurants.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -501,6 +502,7 @@
 				INFOPLIST_FILE = FoodieFootprints/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Foodie;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_NSContactsUsageDescription = "We need access to your contacts to add them as companions to your restaurant visits.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Show nearby restaurants.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
