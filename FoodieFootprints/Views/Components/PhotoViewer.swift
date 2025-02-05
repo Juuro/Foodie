@@ -5,9 +5,7 @@ struct PhotoViewer: View {
     let initialIndex: Int
     @Binding var isPresented: Int?
     @State private var currentIndex: Int
-    @State private var scale: CGFloat = 1.0
-    @State private var lastScale: CGFloat = 1.0
-    @State private var offset: CGSize = .zero
+    @GestureState private var dragOffset = CGSize.zero
     
     init(photos: [Visit.Photo], initialIndex: Int, isPresented: Binding<Int?>) {
         self.photos = photos
@@ -18,67 +16,40 @@ struct PhotoViewer: View {
     
     var body: some View {
         GeometryReader { geometry in
-            TabView(selection: $currentIndex) {
-                ForEach(Array(photos.enumerated()), id: \.offset) { index, photo in
-                    if let image = photo.image {
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .tag(index)
-                            .scaleEffect(scale)
-                            .offset(offset)
-                            .gesture(
-                                MagnificationGesture()
-                                    .onChanged { value in
-                                        let delta = value / lastScale
-                                        lastScale = value
-                                        scale *= delta
-                                    }
-                                    .onEnded { _ in
-                                        lastScale = 1.0
-                                    }
-                            )
-                            .gesture(
-                                DragGesture()
-                                    .onChanged { value in
-                                        offset = value.translation
-                                    }
-                                    .onEnded { _ in
-                                        withAnimation {
-                                            offset = .zero
-                                            scale = 1.0
-                                        }
-                                    }
-                            )
-                            .onTapGesture(count: 2) {
-                                withAnimation {
-                                    if scale > 1 {
-                                        scale = 1.0
-                                        offset = .zero
-                                    } else {
-                                        scale = 2.0
-                                    }
-                                }
-                            }
+            ZStack {
+                Color.black.edgesIgnoringSafeArea(.all)
+                
+                TabView(selection: $currentIndex) {
+                    ForEach(photos.indices, id: \.self) { index in
+                        if let image = photos[index].image {
+                            image
+                                .resizable()
+                                .scaledToFit()
+                                .tag(index)
+                        }
                     }
                 }
-            }
-            .tabViewStyle(.page)
-            .indexViewStyle(.page(backgroundDisplayMode: .always))
-            .overlay(alignment: .topTrailing) {
-                Button {
-                    isPresented = nil
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title)
-                        .foregroundStyle(.white)
-                        .background(Color.black.opacity(0.5))
-                        .clipShape(Circle())
+                .tabViewStyle(.page)
+                .indexViewStyle(.page(backgroundDisplayMode: .always))
+                
+                // Close button with more padding from top
+                VStack {
+                    HStack {
+                        Spacer()
+                        Button {
+                            isPresented = nil
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.title)
+                                .foregroundStyle(.white)
+                                .background(Color.black.opacity(0.5))
+                                .clipShape(Circle())
+                        }
+                        .padding(.trailing, 20)
+                    }
+                    Spacer()
                 }
-                .padding()
             }
         }
-        .background(Color.black)
-        .ignoresSafeArea()
     }
 } 

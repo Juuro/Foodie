@@ -10,13 +10,18 @@ struct RestaurantPreview: View {
     }
     
     var body: some View {
-        
         HStack {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text(restaurant.name)
                         .font(.headline)
                         .foregroundColor(.primary)
+                    if !restaurant.menuFiles.isEmpty {
+                        Image(systemName: "menucard.fill")
+                            .foregroundStyle(.secondary)
+                            .foregroundColor(.secondary)
+                    }
+                    
                     Spacer()
                     RatingView(rating: restaurant.averageRating)
                 }
@@ -73,7 +78,6 @@ struct RestaurantPreview: View {
             Image(systemName: "chevron.right")
                 .foregroundColor(.secondary)
                 .font(.system(size: 14))
-            
         }
         .buttonStyle(.plain)
         .modifier(SwipeActionsModifier(onDelete: onDelete))

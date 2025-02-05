@@ -126,9 +126,7 @@ private struct RestaurantList: View {
             VStack(spacing: 0) {
                 ForEach(restaurants) { restaurant in
                     NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
-                        RestaurantPreview(restaurant: restaurant) {
-                            onDelete(restaurant)
-                        }
+                        RestaurantPreview(restaurant: restaurant, onDelete: { onDelete(restaurant) })
                         .padding(.horizontal)
                         .padding(.vertical)
                     }
