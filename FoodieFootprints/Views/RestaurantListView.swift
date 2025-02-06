@@ -93,7 +93,6 @@ private struct RestaurantListContent: View {
                 )
             }
         }
-        .background(Color(white: 0.95)) // Slightly darker off-white background
     }
 }
 
@@ -122,28 +121,14 @@ private struct RestaurantList: View {
     let onDelete: (Restaurant) -> Void
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                ForEach(restaurants) { restaurant in
-                    NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
-                        RestaurantPreview(restaurant: restaurant, onDelete: { onDelete(restaurant) })
-                        .padding(.horizontal)
+        List {
+            ForEach(restaurants) { restaurant in
+                NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
+                    RestaurantPreview(restaurant: restaurant, onDelete: { onDelete(restaurant) })
                         .padding(.vertical)
-                    }
-                    
-                    if restaurant != restaurants.last {
-                        Divider()
-                            .padding(.horizontal)
-                    }
                 }
             }
-            .background {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.white)
-            }
-            .padding(.horizontal)
         }
-        .scrollContentBackground(.hidden)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 SortButton(showingSortOptions: $showingSortOptions, sortOption: $sortOption)
